@@ -26,7 +26,7 @@ jobs:
         echo "$(clang-format --version)"
     - name: Install lcov
       run: |
-        sudo apt-get update && apt-get install lcov
+        sudo apt-get update && sudo apt-get install lcov
     - name: formatting and linting
       run: |
         make format-check
