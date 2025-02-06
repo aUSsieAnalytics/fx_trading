@@ -10,11 +10,10 @@ outputs:
 
 runs:
   using: "composite"
-  defaults:
-    shell: bash
   steps:
   - name:
     id: info
+    shell: bash
     run: |
       if [[ '${{ github.event.pull_request.merged }}' == 'true' ]]; then
         compare_to=origin/main^
