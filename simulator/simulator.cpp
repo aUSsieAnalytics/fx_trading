@@ -6,3 +6,5 @@ FXSimulator::FXSimulator() : _start_time(0), _end_time(0) {
 }
 
 time_t FXSimulator::current_time() { return _current_time; }
+time_t FXSimulator::start_time() { return _start_time; }
+time_t FXSimulator::end_time() { return _end_time; }

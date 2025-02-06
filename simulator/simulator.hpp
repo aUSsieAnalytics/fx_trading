@@ -12,4 +12,6 @@ class FXSimulator {
 public:
   FXSimulator();
   time_t current_time();
+  time_t end_time();
+  time_t start_time();
 };
