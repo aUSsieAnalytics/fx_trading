@@ -19,7 +19,7 @@ jobs:
         lfs: false
         fetch-depth: 0
     - name: Get PR metadata
-      uses: ./github/actions/action_meta
+      uses: .github/actions/action_meta
     - name: upgrade clang-format
       run: |
         pip install clang-format
