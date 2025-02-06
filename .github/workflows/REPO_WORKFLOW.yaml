@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   WorkflowMeta:
-    runs-on: ubutu-latest
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
