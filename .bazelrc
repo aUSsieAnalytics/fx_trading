@@ -1,0 +1,12 @@
+coverage:macos --experimental_generate_llvm_lcov
+coverage:macos --test_env=COVERAGE_GCOV_PATH=/Library/Developer/CommandLineTools/usr/bin/llvm-profdata
+coverage:macos --test_env=LLVM_COV=/Library/Developer/CommandLineTools/usr/bin/llvm-cov
+coverage:macos --copt=-ffile-compilation-dir=.
+coverage --combined_report=lcov
+coverage:macos --repo_env=GCOV=/Library/Developer/CommandLineTools/usr/bin/llvm-profdata
+coverage:macos --repo_env=BAZEL_LLVM_COV=/Library/Developer/CommandLineTools/usr/bin/llvm-cov
+coverage:macos --repo_env=BAZEL_LLVM_PROFDATA=/Library/Developer/CommandLineTools/usr/bin/llvm-profdata
+coverage:macos --test_env=GENERATE_LLVM_LCOV=1
+coverage --nocache_test_results
+
+build --copt=--std=c++17

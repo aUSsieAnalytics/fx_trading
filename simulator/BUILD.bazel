@@ -7,11 +7,12 @@ cc_library(
 )
 cc_test(
     name = "simulator_tests",
-    srcs = ["tests/_test_simulator.cpp"],
+    srcs = ["tests/test_simulator.cpp"],
     includes = ["."],
+    size = "small",
     deps = [
         "@googletest//:gtest",
         "@googletest//:gtest_main",
-        "//simulator:fx_simulator"
+        "//simulator:fx_simulator",
     ],
 )

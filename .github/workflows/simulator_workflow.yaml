@@ -24,9 +24,18 @@ jobs:
       run: |
         pip install clang-format
         echo "$(clang-format --version)"
+    - name: Install lcov
+      run: |
+        sudo apt-get update && sudo apt-get install lcov
     - name: formatting and linting
       run: |
         make format-check
-    - name: run tests
+    - name: run test coverage
       run: |
-        make test
+        mkdir coverage_output && make coverage >> coverage_output/coverage.info
+        LINES_COVERED=$(cat coverage_output/coverage.info | awk '/lines\.\.\./ {print $2}' | tr -d '%')
+        REQUIRED_COVERAGE=100
+        if (( $(echo "$LINES_COVERED < $REQUIRED_COVERAGE" | bc -l) )); then
+          echo "Coverage is below $REQUIRED_COVERAGE%! Failing the build."
+          exit 1
+        fi
