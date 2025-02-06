@@ -24,7 +24,7 @@ jobs:
     steps:
     - name: Check Statuses
       run: |
-        if [[ "${{ github.event.pull_request.draft }}" != 'false']]; then
+        if [[ "${{ github.event.pull_request.draft }}" != 'false' ]]; then
           echo "switching from draft can cause an erroneous pass of the actions. Push a new commit or reopen."
           exit 1
         fi
