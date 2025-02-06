@@ -1,0 +1,27 @@
+name: "Get action meta data"
+
+outputs:
+  commit_message:
+    value: ${{ steps.info.outputs.commit_message }}
+  git_short_sha:
+      value: ${{ steps.info.outputs.SHORT_SHA }}
+  branch_name:
+      value: ${{ steps.info.outputs.BRANCH_NAME }}
+
+runs:
+  using: "composite"
+  steps:
+  - name:
+    id: info
+    run: |
+      if [[ '${{ github.event.pull_request.merged }}' == 'true' ]]; then
+        compare_to=origin/main^
+      else
+        compare_to=origin/main
+      fi
+      echo "$(git log ${compare_to}..HEAD --oneline | sed -n 2p)"
+      commit_message=$(git log ${compare_to}..HEAD --oneline | sed -n 2p)
+      echo "commit_message=${commit_message}" >> $GITHUB_OUTPUT
+      echo ${commit_message}
+      echo "SHORT_SHA=`echo $(git log ${compare_to}..HEAD --oneline | sed -n 2p | cut -d ' ' -f1)`" >> $GITHUB_OUTPUT
+      echo "BRANCH_NAME=`echo ${GITHUB_REF_NAME} | tr / _`" >> $GITHUB_OUTPUT

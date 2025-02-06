@@ -20,8 +20,7 @@ jobs:
         fetch-depth: 0
     - name: upgrade clang-format
       run: |
-        sudo apt-get update
-        sudo apt-get install -y clang-format-19
+        pip install clang-format
         echo "$(clang-format --version)"
     - name: formatting and linting
       run: |
