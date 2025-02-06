@@ -1,0 +1,26 @@
+name: Simulator Workflow
+
+on:
+  workflow_call:
+    inputs: {}
+    outputs: {}
+    secrets: {}
+
+jobs:
+  simulator-workflow:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        lfs: false
+        fetch-depth: 0
+    - name: formatting and linting
+      run: |
+        make format-check
+    - name: run tests
+      run: |
+        make test
