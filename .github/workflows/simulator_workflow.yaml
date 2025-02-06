@@ -24,6 +24,9 @@ jobs:
       run: |
         pip install clang-format
         echo "$(clang-format --version)"
+    - name: Install lcov
+      run: |
+        sudo apt-get update && apt-get install lcov
     - name: formatting and linting
       run: |
         make format-check
