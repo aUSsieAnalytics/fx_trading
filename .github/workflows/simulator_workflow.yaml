@@ -18,6 +18,9 @@ jobs:
       with:
         lfs: false
         fetch-depth: 0
+    - name: update clang-format
+      run: |
+        apt-get upgrade clang-format
     - name: formatting and linting
       run: |
         make format-check
