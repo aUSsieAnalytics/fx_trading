@@ -1,0 +1,17 @@
+cc_library(
+    name = "fx_simulator",
+    deps = ["//types:trading_types"],
+    srcs = glob(["*.cpp"]),
+    hdrs = glob(["*.hpp"]),
+    visibility = ["//visibility:public"],
+)
+cc_test(
+    name = "simulator_tests",
+    srcs = ["tests/_test_simulator.cpp"],
+    includes = ["."],
+    deps = [
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//simulator:fx_simulator"
+    ],
+)

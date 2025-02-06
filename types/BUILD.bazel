@@ -1,0 +1,5 @@
+cc_library(
+    name = "trading_types",
+    hdrs = ["types.h"],
+    visibility = ["//visibility:public"],
+)
