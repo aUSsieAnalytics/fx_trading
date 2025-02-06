@@ -11,8 +11,7 @@ outputs:
 runs:
   using: "composite"
   defaults:
-    run:
-      shell: bash
+    shell: bash
   steps:
   - name:
     id: info
