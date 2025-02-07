@@ -39,3 +39,4 @@
 .vscode/
 
 coverage_output/
+*.key

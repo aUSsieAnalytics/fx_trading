@@ -1,0 +1,19 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build debug",
+            "type": "shell",
+            "command": "bazel build -c dbg //...",
+            "osx": {
+              "command": "bazel build -c dbg  --spawn_strategy=standalone --genrule_strategy=standalone //...",
+            },
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            },
+          }
+    ]
+}

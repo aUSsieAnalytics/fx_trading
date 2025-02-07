@@ -2,8 +2,6 @@
 
 #include <time.h>
 
-using namespace std;
-
 class FXSimulator {
   time_t _current_time;
   time_t _end_time;
