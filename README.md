@@ -6,6 +6,8 @@ brew install bazel
 brew install buildifier
 brew install googletest  # maybe not needed, idk if bazel will take of this
 brew install lcov
+brew install git-lfs
+git lfs install # from repo folder
 ```
 
 ## Initial Idea
