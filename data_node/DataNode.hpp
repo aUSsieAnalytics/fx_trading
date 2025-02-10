@@ -19,7 +19,7 @@ template <typename T> class DataNode {
   std::vector<DataWeakPtr> _push_data;
 
 public:
-  DataNode<T>() {}
+  DataNode() {}
   std::vector<DataShrPtr> get_pull_data() { return _pull_data; }
   std::vector<DataWeakPtr> get_push_data() { return _push_data; }
   void add_pull_data(DataShrPtr data) { _pull_data.push_back(data); }
