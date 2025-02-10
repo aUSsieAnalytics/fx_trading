@@ -15,14 +15,14 @@ typedef std::variant<std::weak_ptr<DataNode<int>>, std::weak_ptr<DataNode<double
 
 template <typename T> class DataNode {
   std::vector<T> _data;
-  std::vector<DataNodeShrPtr> _pull_data;
-  std::vector<DataNodeWeakPtr> _push_data;
+  std::vector<DataNodeShrPtr> _pull_nodes;
+  std::vector<DataNodeWeakPtr> _push_nodes;
 
 public:
-  DataNode() : _data(), _pull_data(), _push_data() {}
-  std::vector<DataNodeShrPtr> get_pull_data() { return _pull_data; }
-  std::vector<DataNodeWeakPtr> get_push_data() { return _push_data; }
-  void add_pull_node(DataNodeShrPtr data) { _pull_data.push_back(data); }
-  void add_push_node(DataNodeWeakPtr data) { _push_data.push_back(data); }
+  DataNode() : _data(), _pull_nodes(), _push_nodes() {}
+  std::vector<DataNodeShrPtr> get_pull_nodes() { return _pull_nodes; }
+  std::vector<DataNodeWeakPtr> get_push_nodes() { return _push_nodes; }
+  void add_pull_node(DataNodeShrPtr data) { _pull_nodes.push_back(data); }
+  void add_push_node(DataNodeWeakPtr data) { _push_nodes.push_back(data); }
   virtual std::vector<T> get_data() { return _data; };
 };
