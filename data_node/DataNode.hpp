@@ -44,5 +44,6 @@ template <typename T> class DataNode : public IDataNode {
   std::vector<T> _data;
 
 public:
+  DataNode() : _data() {};
   virtual std::vector<T> get_data() { return _data; };
 };
