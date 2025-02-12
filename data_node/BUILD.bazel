@@ -7,7 +7,7 @@ cc_library(
 )
 cc_test(
     name = "data_node_tests",
-    srcs = ["tests/test_datanode.cpp"],
+    srcs = ["tests/test_data_node.cpp"],
     includes = ["."],
     size = "small",
     deps = [
