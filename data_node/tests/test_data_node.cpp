@@ -3,7 +3,18 @@
 
 using namespace std;
 
-TEST(DataTest, Initialization) { auto source = DataNode<int>(); }
+TEST(DataTest, Initialization) {
+  DataNode<int> source = DataNode<int>();
+  DataNode<int> hi_node = DataNode<int>("hi");
+  for (int i = 0; i < 100; i++) {
+    hi_node = DataNode<int>(i, "hi");
+  }
+  std::string hash = source.get_hash();
+  ASSERT_EQ(hash, DataNode<int>().get_hash());
+  ASSERT_EQ(hash, sha256("IDataNode"));
+  ASSERT_NE(hash, hi_node.get_hash());
+  ASSERT_EQ(DataNode<int>("hi").get_hash(), sha256("IDataNodehi"));
+}
 
 TEST(DataTest, AddSource) {
   auto root = make_shared<DataNode<int>>();
