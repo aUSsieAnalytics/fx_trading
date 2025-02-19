@@ -28,6 +28,20 @@
         // get the path you need here with `bazel info execution_root`
         "/private/var/tmp/_bazel_peter/991743812555cf9fccebddb0c55f713b/execroot/_main": "${workspaceFolder}"
       }
+    },
+    {
+      "name": "gtest hashing",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/data_node/data_node_tests",
+      "preLaunchTask": "Build debug",
+      "MIMode": "lldb",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "sourceFileMap":{
+        // get the path you need here with `bazel info execution_root`
+        "/private/var/tmp/_bazel_peter/991743812555cf9fccebddb0c55f713b/execroot/_main": "${workspaceFolder}"
+      }
     }
   ]
 }
