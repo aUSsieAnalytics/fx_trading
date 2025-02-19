@@ -12,6 +12,7 @@ typedef std::shared_ptr<IDataNode> DataNodeShrPtr;
 typedef std::weak_ptr<IDataNode> DataNodeWeakPtr;
 
 class IDataNode : public std::enable_shared_from_this<IDataNode> {
+  using type = int;
   std::string _class_name;
   std::vector<DataNodeShrPtr> _upstream_nodes;
   std::vector<DataNodeWeakPtr> _downstream_nodes;
@@ -87,7 +88,7 @@ public:
   std::string get_hash() { return _hash; }
 };
 
-template <typename T, class ClassName = IDataNode> class DataNode : public IDataNode {
+template <typename ClassName = IDataNode, typename T = double> class DataNode : public IDataNode {
   std::vector<T> _data;
 
 public:
@@ -96,7 +97,7 @@ public:
   virtual ~DataNode() = default;
   virtual std::vector<T> get_data() { return _data; };
 
-  template <class... Args> static std::shared_ptr<DataNode<T, ClassName>> create(Args... args) {
+  template <class... Args> static std::shared_ptr<ClassName> create(Args... args) {
     return std::make_shared<ClassName>(ClassName(args...));
   };
 };
