@@ -91,9 +91,11 @@ public:
 template <typename ClassName = IDataNode, typename T = double> class DataNode : public IDataNode {
   std::vector<T> _data;
 
-public:
+protected:
   template <class... Args>
   DataNode(std::string class_name = "", Args... args) : IDataNode(class_name, args...), _data(){};
+
+public:
   virtual ~DataNode() = default;
   virtual std::vector<T> get_data() { return _data; };
 
