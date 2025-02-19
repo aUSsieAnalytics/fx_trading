@@ -17,6 +17,21 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   std::vector<DataNodeWeakPtr> _downstream_nodes;
   std::string _hash;
   std::string _hash_string;
+
+  friend std::ostream &operator<<(std::ostream &stream, IDataNode &node) {
+    return stream << node._hash_string;
+  }
+  friend std::ostream &operator<<(std::ostream &stream, DataNodeShrPtr node) {
+    return stream << node->_hash_string;
+  }
+  friend std::ostream &operator<<(std::ostream &stream, DataNodeWeakPtr node) {
+    auto real_ptr = node.lock();
+    if (real_ptr) {
+      stream << real_ptr->_hash_string;
+    }
+    return stream;
+  }
+
   friend std::shared_ptr<std::vector<DataNodeShrPtr>>
   get_leaf_nodes(std::shared_ptr<IDataNode> node,
                  std::shared_ptr<std::vector<DataNodeShrPtr>> leaf_nodes = nullptr) {
@@ -35,22 +50,27 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   }
 
   template <typename T = std::string, typename... Args>
-  void add_to_hash_string(T t = "", Args... args) {
+  void create_hash_string(T t = "", Args... args) {
     std::ostringstream oss;
     oss << t;
-    std::string as_string = oss.str();
-    if (as_string == "") {
+    if (oss.str().size() == 0) {
       return;
     }
+    if (sizeof...(args) != 0) {
+      oss << ", ";
+    };
+    std::string as_string = oss.str();
     _hash_string += as_string;
-    add_to_hash_string(args...);
+    create_hash_string(args...);
   }
 
 public:
   DataNodeWeakPtr get_weak_ptr() { return shared_from_this(); };
   template <class... Args>
-  IDataNode(Args... args) : _upstream_nodes(), _downstream_nodes(), _class_name(__func__) {
-    add_to_hash_string(_class_name, args...);
+  IDataNode(std::string class_name, Args... args)
+      : _upstream_nodes(), _downstream_nodes(), _class_name(class_name) {
+    _hash_string = _class_name + ": ";
+    create_hash_string(args...);
     _hash = sha256(_hash_string);
   }
   std::vector<DataNodeShrPtr> get_upstream_nodes() { return _upstream_nodes; }
@@ -66,6 +86,7 @@ template <typename T> class DataNode : public IDataNode {
   std::vector<T> _data;
 
 public:
-  template <class... Args> DataNode(Args... args) : IDataNode(args...), _data(){};
+  template <class... Args>
+  DataNode(std::string class_name, Args... args) : IDataNode(class_name, args...), _data(){};
   virtual std::vector<T> get_data() { return _data; };
 };
