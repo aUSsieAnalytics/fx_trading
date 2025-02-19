@@ -66,6 +66,7 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
 
 public:
   DataNodeWeakPtr get_weak_ptr() { return shared_from_this(); };
+
   template <class... Args>
   IDataNode(std::string class_name, Args... args)
       : _upstream_nodes(), _downstream_nodes(), _class_name(class_name) {
@@ -73,20 +74,29 @@ public:
     create_hash_string(args...);
     _hash = sha256(_hash_string);
   }
+
   std::vector<DataNodeShrPtr> get_upstream_nodes() { return _upstream_nodes; }
+
   std::vector<DataNodeWeakPtr> get_downstream_nodes() { return _downstream_nodes; }
+
   void add_upstream_node(DataNodeShrPtr data) {
     _upstream_nodes.push_back(data);
     data->_downstream_nodes.push_back(get_weak_ptr());
   }
+
   std::string get_hash() { return _hash; }
 };
 
-template <typename T> class DataNode : public IDataNode {
+template <typename T, class ClassName = IDataNode> class DataNode : public IDataNode {
   std::vector<T> _data;
 
 public:
   template <class... Args>
-  DataNode(std::string class_name, Args... args) : IDataNode(class_name, args...), _data(){};
+  DataNode(std::string class_name = "", Args... args) : IDataNode(class_name, args...), _data(){};
+  virtual ~DataNode() = default;
   virtual std::vector<T> get_data() { return _data; };
+
+  template <class... Args> static std::shared_ptr<DataNode<T, ClassName>> create(Args... args) {
+    return std::make_shared<ClassName>(ClassName(args...));
+  };
 };
