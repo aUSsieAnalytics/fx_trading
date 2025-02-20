@@ -15,10 +15,13 @@ TEST(DataTest, Initialization) {
   ASSERT_NE(hash, hi_node->get_hash());
   ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("DataNode: hi"));
   {
+    // test scoping
     auto x = IDataNode::ScopeLock("local");
     ASSERT_NE(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("DataNode: hi"));
     ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("local: DataNode: hi"));
   }
+  // check that scope was cleared
+  ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("DataNode: hi"));
 }
 
 TEST(DataTest, AddSource) {

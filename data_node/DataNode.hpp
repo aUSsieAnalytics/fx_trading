@@ -8,9 +8,30 @@
 #include <vector>
 
 class IDataNode;
+template <typename ClassName = IDataNode, typename T = double> class DataNode;
 
 typedef std::shared_ptr<IDataNode> DataNodeShrPtr;
 typedef std::weak_ptr<IDataNode> DataNodeWeakPtr;
+
+class DataStore {
+  std::unordered_map<std::string, std::shared_ptr<void>> _store;
+
+public:
+  DataStore() : _store() {};
+
+  template <typename ClassName, typename T>
+  void put_in_store(DataNode<ClassName, T> *node, std::shared_ptr<std::vector<T>> data) {
+    _store[node->get_hash()] = data;
+  }
+
+  template <typename ClassName, typename T>
+  std::shared_ptr<std::vector<T>> retrieve(DataNode<ClassName, T> *node) {
+    if (_store.find(node->get_hash()) != _store.end()) {
+      return std::static_pointer_cast<std::vector<T>>(_store[node->get_hash()]);
+    }
+    return nullptr;
+  };
+};
 
 class IDataNode : public std::enable_shared_from_this<IDataNode> {
   static inline std::mutex _scope_lock;
@@ -68,6 +89,9 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
     create_hash_string(args...);
   }
 
+protected:
+  static inline DataStore _data_store;
+
 public:
   class ScopeLock {
   public:
@@ -95,7 +119,7 @@ public:
   std::vector<DataNodeShrPtr> get_upstream_nodes() { return _upstream_nodes; }
 
   std::vector<DataNodeWeakPtr> get_downstream_nodes() { return _downstream_nodes; }
-
+  std::string get_scope() { return _class_scope; }
   void add_upstream_node(DataNodeShrPtr data) {
     _upstream_nodes.push_back(data);
     data->_downstream_nodes.push_back(get_weak_ptr());
@@ -104,8 +128,9 @@ public:
   std::string get_hash() { return _hash; }
 };
 
-template <typename ClassName = IDataNode, typename T = double> class DataNode : public IDataNode {
+template <typename ClassName, typename T> class DataNode : public IDataNode {
   std::vector<T> _data;
+  void _calculate() { _data_store.put_in_store(calculate()); }
 
 protected:
   template <class... Args>
@@ -113,9 +138,18 @@ protected:
 
 public:
   virtual ~DataNode() = default;
-  virtual std::vector<T> get_data() { return _data; };
+  std::shared_ptr<std::vector<T>> get_data() {
+    auto data = _data_store.retrieve(this);
+    if (!data) {
+      _data_store.put_in_store(this, calculate());
+      data = _data_store.retrieve(this);
+    }
+    return data;
+  }
+
+  virtual std::shared_ptr<std::vector<T>> calculate() { return nullptr; }
 
   template <class... Args> static std::shared_ptr<ClassName> create(Args... args) {
     return std::make_shared<ClassName>(ClassName(args...));
-  };
+  }
 };
