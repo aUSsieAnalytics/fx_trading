@@ -34,6 +34,6 @@ TEST(DataTest, ExampleNodes) {
   auto example_one = DataNode<ExampleNode>::create(0, 1);
   auto example_two = DataNode<ExampleNode2>::create(3);
   string hash = example_one->get_hash();
-  example_one->get_data()->size();
-  example_two->get_data()->size();
+  ASSERT_EQ(example_one->get_data()->size(), 2);
+  ASSERT_EQ(example_two->get_data()->size(), 2);
 }
