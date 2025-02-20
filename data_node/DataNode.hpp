@@ -2,6 +2,7 @@
 
 #include "sha256.hpp"
 #include <memory>
+#include <mutex>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -12,7 +13,9 @@ typedef std::shared_ptr<IDataNode> DataNodeShrPtr;
 typedef std::weak_ptr<IDataNode> DataNodeWeakPtr;
 
 class IDataNode : public std::enable_shared_from_this<IDataNode> {
-  using type = int;
+  static inline std::mutex _scope_lock;
+  static inline std::string _scope;
+  std::string _class_scope;
   std::string _class_name;
   std::vector<DataNodeShrPtr> _upstream_nodes;
   std::vector<DataNodeWeakPtr> _downstream_nodes;
@@ -66,12 +69,25 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   }
 
 public:
+  class ScopeLock {
+  public:
+    ScopeLock(std::string scope) {
+      _scope_lock.lock();
+      _scope = scope;
+    }
+    ~ScopeLock() {
+      _scope = "";
+      _scope_lock.unlock();
+    }
+  };
   DataNodeWeakPtr get_weak_ptr() { return shared_from_this(); };
 
   template <class... Args>
   IDataNode(std::string class_name, Args... args)
       : _upstream_nodes(), _downstream_nodes(), _class_name(class_name) {
-    _hash_string = _class_name + ": ";
+    _class_scope = _scope;
+    _scope == "" ? _hash_string = "" : _hash_string = _class_scope + ": ";
+    _hash_string += _class_name + ": ";
     create_hash_string(args...);
     _hash = sha256(_hash_string);
   }

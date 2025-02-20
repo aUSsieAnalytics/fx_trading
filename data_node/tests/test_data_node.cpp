@@ -14,6 +14,11 @@ TEST(DataTest, Initialization) {
   ASSERT_EQ(hash, sha256("DataNode: "));
   ASSERT_NE(hash, hi_node->get_hash());
   ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("DataNode: hi"));
+  {
+    auto x = IDataNode::ScopeLock("local");
+    ASSERT_NE(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("DataNode: hi"));
+    ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("local: DataNode: hi"));
+  }
 }
 
 TEST(DataTest, AddSource) {
