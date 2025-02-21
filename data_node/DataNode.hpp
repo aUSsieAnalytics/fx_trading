@@ -186,7 +186,11 @@ public:
     return std::vector<T>(*data);
   }
 
-  virtual void calculate() {}
+  virtual void calculate() {
+    if (_parent_hash != "") {
+      _parent_calc(shared_from_this());
+    }
+  }
 
   template <class... Args> static std::shared_ptr<ClassName> create(Args... args) {
     auto new_node = std::make_shared<ClassName>(ClassName(args...));
