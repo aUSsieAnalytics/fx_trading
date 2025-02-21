@@ -3,4 +3,4 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
   bazel coverage //...
 fi
-genhtml --branch-coverage --output  coverage_output "$(bazel info output_path)/_coverage/_coverage_report.dat"
+genhtml --filter brace --branch-coverage --output  coverage_output "$(bazel info output_path)/_coverage/_coverage_report.dat"

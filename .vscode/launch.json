@@ -2,7 +2,65 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "gtest simulator",
+      "name": "DataNode test",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/data_node/data_node_tests",
+      "args": [],
+      "stopAtEntry": false,
+      "preLaunchTask": "Build debug",
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          },
+          {
+              "description": "Set Disassembly Flavor to Intel",
+              "text": "-gdb-set disassembly-flavor intel",
+              "ignoreFailures": true
+          }
+      ],
+      "sourceFileMap":{
+        // get the path you need here with `bazel info execution_root`
+        "/home/vscode/.cache/bazel/_bazel_vscode/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Simulation test",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/simulator/simulator_tests",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "preLaunchTask": "Build debug",
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          },
+          {
+              "description": "Set Disassembly Flavor to Intel",
+              "text": "-gdb-set disassembly-flavor intel",
+              "ignoreFailures": true
+          }
+      ],
+      "sourceFileMap":{
+        // get the path you need here with `bazel info execution_root`
+        "/home/vscode/.cache/bazel/_bazel_vscode/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "gtest simulator (apple)",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bazel-bin/simulator/simulator_tests",
@@ -12,7 +70,21 @@
       "cwd": "${workspaceFolder}",
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/private/var/tmp/_bazel_peter/991743812555cf9fccebddb0c55f713b/execroot/_main": "${workspaceFolder}"
+        "/private/var/tmp/_bazel_peter/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "gtest data_node (apple)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/data_node/data_node_tests",
+      "preLaunchTask": "Build debug",
+      "MIMode": "lldb",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "sourceFileMap":{
+        // get the path you need here with `bazel info execution_root`
+        "/private/var/tmp/_bazel_peter/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
       }
     }
   ]

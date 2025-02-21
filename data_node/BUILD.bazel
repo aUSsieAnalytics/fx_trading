@@ -1,0 +1,22 @@
+cc_library(
+    name = "data_node",
+    deps = ["//types:trading_types"],
+    srcs = glob(["*.cpp"]),
+    hdrs = glob(["*.hpp"]),
+    visibility = ["//visibility:public"],
+)
+cc_test(
+    name = "data_node_tests",
+    srcs = [
+        "tests/test_data_node.cpp",
+        "tests/test_example_node.cpp",
+        "tests/test_hashing.cpp",
+    ],
+    includes = ["."],
+    size = "small",
+    deps = [
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//data_node:data_node",
+    ],
+)
