@@ -177,13 +177,13 @@ public:
     _data_store.put_in_store(this, std::make_shared<std::vector<T>>(data));
   }
 
-  std::shared_ptr<std::vector<T>> get_data() {
+  std::vector<T> get_data() {
     auto data = _data_store.retrieve(this);
     if (!data) {
       _parent_hash != "" ? _parent_calc(shared_from_this()) : calculate();
       data = _data_store.retrieve(this);
     }
-    return data;
+    return std::vector<T>(*data);
   }
 
   virtual void calculate() {}

@@ -41,17 +41,17 @@ public:
 
   void calculate() override {
     auto x = _example_node->output_2->get_data();
-    x->at(0) *= _value5;
-    set_data(*x);
+    x.push_back(_value5);
+    set_data(x);
   }
 };
 
 TEST(DataTest, ExampleNodes) {
+  int value = 3;
   auto example_one = DataNode<ExampleNode>::create(0, 1);
-  auto example_two = DataNode<ExampleNode2>::create(3);
-  string hash = example_one->get_hash();
-  ASSERT_EQ(example_two->get_data()->size(), 2);
-  example_one->calculate();
-  auto data = example_one->output_1->get_data();
-  ASSERT_EQ(example_one->output_1->get_data()->size(), 2);
+  auto example_two = DataNode<ExampleNode2>::create(value);
+  ASSERT_EQ(example_two->get_data().size(), 3);
+  ASSERT_EQ(example_two->get_data().at(example_two->get_data().size() - 1), value);
+  ASSERT_EQ(example_one->output_1->get_data().size(), 2);
+  ASSERT_EQ(example_one->output_1->get_data().size(), 2);
 }
