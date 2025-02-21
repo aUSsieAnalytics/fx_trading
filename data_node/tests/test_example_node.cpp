@@ -49,8 +49,7 @@ TEST(DataTest, ExampleNodes) {
   int value = 3;
   auto example_one = DataNode<ExampleNode>::create(0, 1);
   auto example_two = DataNode<ExampleNode2>::create(value);
+  ASSERT_EQ(example_one->output_1->get_data().size(), 2);
   ASSERT_EQ(example_two->get_data().size(), 3);
   ASSERT_EQ(example_two->get_data().at(example_two->get_data().size() - 1), value);
-  ASSERT_EQ(example_one->output_1->get_data().size(), 2);
-  ASSERT_EQ(example_one->output_1->get_data().size(), 2);
 }
