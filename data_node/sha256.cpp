@@ -114,7 +114,7 @@ std::string sha256(std::string input) {
   unsigned int buffer_size = 2 * SHA256::DIGEST_SIZE + 1;
   char buf[buffer_size];
   buf[2 * SHA256::DIGEST_SIZE] = 0;
-  for (int i = 0; i < SHA256::DIGEST_SIZE; i++)
+  for (unsigned int i = 0; i < SHA256::DIGEST_SIZE; i++)
     snprintf(buf + i * 2, buffer_size - i * 2 + 1, "%02x", digest[i]);
   return std::string(buf);
 }
