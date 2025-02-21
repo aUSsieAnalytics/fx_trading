@@ -21,6 +21,12 @@ class DataStore {
 public:
   DataStore() : _store() {};
 
+  template <typename ClassName, typename T> void clear_data(DataNode<ClassName, T> *node) {
+    if (_store.find(node->get_hash()) != _store.end()) {
+      _store.erase(node->get_hash());
+    }
+  }
+
 private:
   template <typename ClassName, typename T> friend class DataNode;
   template <typename ClassName, typename T>
@@ -50,6 +56,7 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   std::function<void(std::shared_ptr<void> onode)> _parent_calc;
   std::string _hash;
   std::string _hash_string;
+
   template <typename ClassName, typename T> friend class DataNode;
   friend std::ostream &operator<<(std::ostream &stream, IDataNode &node) {
     return stream << node._hash_string;
@@ -101,6 +108,8 @@ protected:
   static inline DataStore _data_store;
 
 public:
+  static void clear_registry() { IDataNode::__registry__.clear(); }
+
   class ScopeLock {
   public:
     ScopeLock(std::string scope) {
@@ -115,11 +124,11 @@ public:
   DataNodeWeakPtr get_weak_ptr() { return shared_from_this(); };
 
   template <class... Args>
-  IDataNode(std::string class_name, Args... args)
+  IDataNode(std::string class_name, std::string type_id = "", Args... args)
       : _upstream_nodes(), _downstream_node_hashes(), _class_name(class_name) {
     _class_scope = _scope;
     _scope == "" ? _hash_string = "" : _hash_string = _class_scope + ": ";
-    _hash_string += _class_name + ": ";
+    _hash_string += _class_name + "(" + type_id + ")" + ": ";
     create_hash_string(args...);
     _hash = sha256(_hash_string);
   }
@@ -149,9 +158,14 @@ template <typename ClassName, typename T> class DataNode : public IDataNode {
   void _calculate() { _data_store.put_in_store(calculate()); }
 
 public:
+  static inline const std::string type_id = typeid(T).name();
+
   template <class... Args>
-  DataNode(std::string class_name = "", Args... args) : IDataNode(class_name, args...), _data(){};
+  DataNode<ClassName, T>(std::string class_name = "", Args... args)
+      : IDataNode(class_name, DataNode<ClassName, T>::type_id, args...), _data(){};
+
   friend class IDataNode;
+
   template <typename A>
   std::shared_ptr<DataNode<IDataNode, A>> register_output_node(std::string identifier = "") {
     if (identifier == "") {
@@ -171,7 +185,7 @@ public:
 
   static void calculate(std::shared_ptr<DataNode<ClassName, T>> node) { node->calculate(); }
 
-  virtual ~DataNode() = default;
+  ~DataNode() { _data_store.clear_data(this); };
 
   void set_data(std::vector<T> &data) {
     _data_store.put_in_store(this, std::make_shared<std::vector<T>>(data));
@@ -194,7 +208,11 @@ public:
 
   template <class... Args> static std::shared_ptr<ClassName> create(Args... args) {
     auto new_node = std::make_shared<ClassName>(ClassName(args...));
-    __registry__[new_node->get_hash()] = new_node;
+    if (IDataNode::__registry__.find(new_node->get_hash()) != IDataNode::__registry__.end()) {
+      new_node = std::static_pointer_cast<ClassName>(IDataNode::__registry__[new_node->get_hash()]);
+    } else {
+      IDataNode::__registry__[new_node->get_hash()] = new_node;
+    }
     return new_node;
   }
 };

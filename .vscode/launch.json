@@ -8,6 +8,7 @@
       "program": "${workspaceFolder}/bazel-bin/data_node/data_node_tests",
       "args": [],
       "stopAtEntry": false,
+      "preLaunchTask": "Build debug",
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
@@ -39,6 +40,7 @@
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
+      "preLaunchTask": "Build debug",
       "MIMode": "gdb",
       "setupCommands": [
           {
