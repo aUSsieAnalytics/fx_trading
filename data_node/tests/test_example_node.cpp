@@ -6,7 +6,6 @@ using namespace std;
 class ExampleNode : public DataNode<ExampleNode, double> {
   double _value1;
   int _value2;
-  DataNodeShrPtr _math_node;
 
 public:
   std::shared_ptr<DataNode<IDataNode, double>> output_1;
