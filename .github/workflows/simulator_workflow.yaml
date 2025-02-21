@@ -34,6 +34,7 @@ jobs:
       run: |
         mkdir coverage_output && make coverage >> coverage_output/coverage.info
         cat coverage_output/coverage.info
+        cat bazel-testlogs/data_node/data_node/baseline_coverage.data
         LINES_COVERED=$(cat coverage_output/coverage.info | awk '/lines\.\.\./ {print $2}' | tr -d '%')
         REQUIRED_COVERAGE=100
         if (( $(echo "$LINES_COVERED < $REQUIRED_COVERAGE" | bc -l) )); then
