@@ -19,6 +19,7 @@ TEST(DataTest, Initialization) {
     auto x = IDataNode::ScopeLock("local");
     ASSERT_NE(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("DataNode: hi"));
     ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("local: DataNode: hi"));
+    ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_scope(), "local");
   }
   // check that scope was cleared
   ASSERT_EQ(DataNode<>::create("DataNode", "hi")->get_hash(), sha256("DataNode: hi"));
