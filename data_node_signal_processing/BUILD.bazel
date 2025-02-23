@@ -1,18 +1,15 @@
 cc_library(
-    name = "data_node",
-    deps = [],
-    srcs = glob(["*.cpp"]),
+    name = "signal_processing",
+    deps = ["//data_node:data_node"],
+    srcs = [],
     hdrs = glob(["*.hpp"]),
     visibility = ["//visibility:public"],
-    includes = ["."]
 )
 
 cc_test(
-    name = "data_node_tests",
+    name = "signal_processing_tests",
     srcs = [
-        "tests/test_data_node.cpp",
-        "tests/test_example_node.cpp",
-        "tests/test_hashing.cpp",
+        "tests/test_signal_processing.cpp",
     ],
     includes = ["."],
     size = "small",
@@ -20,5 +17,6 @@ cc_test(
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "//data_node:data_node",
+        "//data_node_signal_processing:signal_processing"
     ],
 )
