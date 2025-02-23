@@ -13,8 +13,8 @@ public:
   std::shared_ptr<DataNode<IDataNode, int>> output_2;
 
   ExampleNode(double value1 = 0, int value2 = 0)
-      : DataNode(__func__, value2), _value1(value1), _value2(value2) {
-    output_1 = register_output_node<double>("output_1");
+      : DataNode(value2), _value1(value1), _value2(value2) {
+    output_1 = register_output_node<double>();
     output_2 = register_output_node<int>();
   }
 

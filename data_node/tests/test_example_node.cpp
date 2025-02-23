@@ -13,7 +13,7 @@ public:
 
   ExampleNode(double value1 = 0, int value2 = 0)
       : DataNode(value2), _value1(value1), _value2(value2) {
-    output_1 = register_output_node<double>("output_1");
+    output_1 = register_output_node<double>();
     output_2 = register_output_node<int>();
   }
 

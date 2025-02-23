@@ -157,19 +157,15 @@ public:
 
   friend class IDataNode;
 
-  template <typename A>
-  std::shared_ptr<DataNode<IDataNode, A>> register_output_node(std::string identifier = "") {
+  template <typename A> std::shared_ptr<DataNode<IDataNode, A>> register_output_node() {
     std::string hash_string;
+    std::string identifier = uuid::generate_uuid_v4();
     _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
     hash_string +=
         "(" + std::string(typeid(DataNode<IDataNode, A>).name()) + "){" + type_id + "}" + ": ";
     hash_string = create_hash_string(hash_string, identifier);
     auto hash_val = sha256(hash_string);
-
-    if (identifier == "") {
-      identifier = uuid::generate_uuid_v4();
-    }
-    auto output_node = std::make_shared<DataNode<IDataNode, A>>(DataNode<IDataNode, A>(identifier));
+    auto output_node = std::make_shared<DataNode<IDataNode, A>>(DataNode<IDataNode, A>());
     output_node->_hash->assign(hash_val);
     output_node->_hash_string = hash_string;
     output_node->_class_scope = _scope;
