@@ -47,3 +47,22 @@ TEST_F(DataNodeTest, TestSimpleMovingAverage) {
   EXPECT_NEAR(int_result.at(3), 1.33333, 1e-4);
   EXPECT_NEAR(int_result.at(5), 2.0, 1e-4);
 }
+
+TEST_F(DataNodeTest, TestExponentialMovingAverage) {
+  std::vector<double> double_vector = {1.0, 1.0, 1.0, 2.0, 2.0, 2.0};
+  std::vector<int> int_vector = {1, 1, 1, 2, 2, 2};
+  auto example_one = DataNode<ExampleNode>::create(double_vector, int_vector);
+  auto ema_double = DataNode<ExponentialMovingAverage<double>>::create(example_one->output_1, 0.5);
+  auto double_result = ema_double->get_data();
+  auto ema_int = DataNode<ExponentialMovingAverage<int>>::create(example_one->output_2, 0.5);
+  auto int_result = ema_int->get_data();
+
+  EXPECT_NEAR(double_result.at(0), 1.0, 1e-4);
+  EXPECT_NEAR(double_result.at(2), 1.0, 1e-4);
+  EXPECT_NEAR(double_result.at(3), 1.5, 1e-4);
+  EXPECT_NEAR(double_result.at(5), 1.875, 1e-4);
+  EXPECT_NEAR(int_result.at(0), 1.0, 1e-4);
+  EXPECT_NEAR(int_result.at(2), 1.0, 1e-4);
+  EXPECT_NEAR(int_result.at(3), 1.5, 1e-4);
+  EXPECT_NEAR(int_result.at(5), 1.875, 1e-4);
+}
