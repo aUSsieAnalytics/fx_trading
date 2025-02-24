@@ -36,6 +36,12 @@ public:
   }
 };
 
+/*
+An exponential moving average for a single vector of values. The template value (A) needs to match
+the DataNode type that is passed to the constructor. The ExponentialMovingAverage always returns a
+vector of type double.
+
+*/
 template <typename A>
 class ExponentialMovingAverage : public DataNode<ExponentialMovingAverage<A>, double> {
   std::shared_ptr<DataNode<IDataNode, A>> _input_data;
