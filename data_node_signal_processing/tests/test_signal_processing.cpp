@@ -1,4 +1,5 @@
 #include "DataNode.hpp"
+#include "data_node_test_utils.hpp"
 #include "signal_processing.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
@@ -28,7 +29,7 @@ public:
   };
 };
 
-TEST(SignalProcessingTest, TestSimpleMovingAverage) {
+TEST_F(DataNodeTest, TestSimpleMovingAverage) {
   std::vector<double> double_vector = {1.0, 1.0, 1.0, 2.0, 2.0, 2.0};
   std::vector<int> int_vector = {1, 1, 1, 2, 2, 2};
   auto example_one = DataNode<ExampleNode>::create(double_vector, int_vector);

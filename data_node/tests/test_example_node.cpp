@@ -1,4 +1,5 @@
 #include "DataNode.hpp"
+#include "data_node_test_utils.hpp"
 #include <gtest/gtest.h>
 
 using namespace std;
@@ -46,7 +47,7 @@ public:
   }
 };
 
-TEST(DataTest, CallChildDataFirst) {
+TEST_F(DataNodeTest, CallChildDataFirst) {
   IDataNode::clear_registry();
   int value = 3;
   auto example_one = DataNode<ExampleNode>::create(0, 1);
@@ -56,7 +57,7 @@ TEST(DataTest, CallChildDataFirst) {
   ASSERT_EQ(example_two->get_data().at(example_two->get_data().size() - 1), value);
 }
 
-TEST(DataTest, CallParentDataFirst) {
+TEST_F(DataNodeTest, CallParentDataFirst) {
   IDataNode::clear_registry();
   int value = 3;
   auto example_one = DataNode<ExampleNode>::create(0, 1);
