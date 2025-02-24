@@ -2,26 +2,27 @@
 #include <gtest/gtest.h>
 
 using namespace std;
+using namespace DataNodes;
 
 class ExampleNode : public DataNode<ExampleNode, double> {
   double _value1;
-  int _value2;
+  int _int_vector;
 
 public:
   std::shared_ptr<DataNode<IDataNode, double>> output_1;
   std::shared_ptr<DataNode<IDataNode, int>> output_2;
 
   ExampleNode(double value1 = 0, int value2 = 0)
-      : DataNode(__func__, value2), _value1(value1), _value2(value2) {
-    output_1 = register_output_node<double>("output_1");
+      : DataNode(value2), _value1(value1), _int_vector(value2) {
+    output_1 = register_output_node<double>();
     output_2 = register_output_node<int>();
   }
 
   void calculate() override {
-    auto x = std::vector<double>({_value1, static_cast<double>(_value2)});
+    auto x = std::vector<double>({_value1, static_cast<double>(_int_vector)});
     set_data(x);
     output_1->set_data(x);
-    auto y = std::vector<int>({-1, _value2});
+    auto y = std::vector<int>({-1, _int_vector});
     output_2->set_data(y);
   };
 };
@@ -33,7 +34,7 @@ class ExampleNode2 : public DataNode<ExampleNode2, int> {
 public:
   ExampleNode2(double value5,
                std::shared_ptr<ExampleNode> math_node = DataNode<ExampleNode>::create())
-      : DataNode<ExampleNode2, int>(__func__, value5, math_node), _value5(value5) {
+      : DataNode<ExampleNode2, int>(value5, math_node), _value5(value5) {
     _example_node = math_node;
     add_upstream_node(math_node);
   }
@@ -46,6 +47,7 @@ public:
 };
 
 TEST(DataTest, CallChildDataFirst) {
+  IDataNode::clear_registry();
   int value = 3;
   auto example_one = DataNode<ExampleNode>::create(0, 1);
   auto example_two = DataNode<ExampleNode2>::create(value);
@@ -55,6 +57,7 @@ TEST(DataTest, CallChildDataFirst) {
 }
 
 TEST(DataTest, CallParentDataFirst) {
+  IDataNode::clear_registry();
   int value = 3;
   auto example_one = DataNode<ExampleNode>::create(0, 1);
   auto example_two = DataNode<ExampleNode2>::create(value);

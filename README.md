@@ -1,6 +1,8 @@
 This repo currently just holds the start to a simulator for Forex backtesting... a more in depth readme can come later after things are more mature and organized.
 
 ## Setup
+**Use the devcontainer**. Or if need be:
+
 ```bash
 brew install bazel
 brew install buildifier

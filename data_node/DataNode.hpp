@@ -9,6 +9,30 @@
 #include <unordered_map>
 #include <vector>
 
+namespace DataNodes {
+
+template <typename T> std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector) {
+  std::ostringstream oss;
+  for (auto &entry : vector) {
+    oss << entry;
+  }
+  return stream << sha256(oss.str());
+}
+
+template <typename T = std::string, typename... Args>
+std::string create_hash_string(std::string hash_string = "", T t = "", Args... args) {
+  std::ostringstream oss;
+  oss << t;
+  if (oss.str().size() == 0) {
+    return hash_string;
+  }
+  if (sizeof...(args) != 0) {
+    oss << ", ";
+  };
+  std::string as_string = oss.str();
+  return create_hash_string(hash_string + as_string, args...);
+}
+
 class IDataNode;
 template <typename ClassName = IDataNode, typename T = double> class DataNode;
 
@@ -50,11 +74,11 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   std::string _class_scope;
   std::string _class_name;
   std::vector<DataNodeShrPtr> _upstream_nodes;
-  std::vector<std::string> _downstream_node_hashes;
+  std::vector<std::shared_ptr<std::string>> _downstream_node_hashes;
   std::vector<DataNodeShrPtr> _output_nodes;
-  std::string _parent_hash;
+  std::weak_ptr<std::string> _parent_hash;
   std::function<void(std::shared_ptr<void> onode)> _parent_calc;
-  std::string _hash;
+  std::shared_ptr<std::string> _hash;
   std::string _hash_string;
 
   template <typename ClassName, typename T> friend class DataNode;
@@ -89,21 +113,6 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
     }
   }
 
-  template <typename T = std::string, typename... Args>
-  void create_hash_string(T t = "", Args... args) {
-    std::ostringstream oss;
-    oss << t;
-    if (oss.str().size() == 0) {
-      return;
-    }
-    if (sizeof...(args) != 0) {
-      oss << ", ";
-    };
-    std::string as_string = oss.str();
-    _hash_string += as_string;
-    create_hash_string(args...);
-  }
-
 protected:
   static inline DataStore _data_store;
 
@@ -124,21 +133,15 @@ public:
   DataNodeWeakPtr get_weak_ptr() { return shared_from_this(); };
 
   template <class... Args>
-  IDataNode(std::string class_name, std::string type_id = "", Args... args)
-      : _upstream_nodes(), _downstream_node_hashes(), _class_name(class_name) {
-    _class_scope = _scope;
-    _scope == "" ? _hash_string = "" : _hash_string = _class_scope + ": ";
-    _hash_string += _class_name + "(" + type_id + ")" + ": ";
-    create_hash_string(args...);
-    _hash = sha256(_hash_string);
-  }
+  IDataNode(Args... args)
+      : _upstream_nodes(), _downstream_node_hashes(), _hash(new std::string("")) {}
 
   std::vector<DataNodeShrPtr> get_upstream_nodes() { return _upstream_nodes; }
 
   std::vector<DataNodeWeakPtr> get_downstream_nodes() {
     std::vector<DataNodeWeakPtr> downstream_nodes = {};
     for (auto &_n_hash : _downstream_node_hashes) {
-      downstream_nodes.push_back(IDataNode::__registry__[_n_hash]);
+      downstream_nodes.push_back(IDataNode::__registry__[*_n_hash]);
     }
     return downstream_nodes;
   }
@@ -150,7 +153,7 @@ public:
     node->_downstream_node_hashes.push_back(_hash);
   }
 
-  std::string get_hash() { return _hash; }
+  std::string get_hash() { return *_hash; }
 };
 
 template <typename ClassName, typename T> class DataNode : public IDataNode {
@@ -160,24 +163,31 @@ template <typename ClassName, typename T> class DataNode : public IDataNode {
 public:
   static inline const std::string type_id = typeid(T).name();
 
-  template <class... Args>
-  DataNode<ClassName, T>(std::string class_name = "", Args... args)
-      : IDataNode(class_name, DataNode<ClassName, T>::type_id, args...), _data(){};
+  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...), _data(){};
 
   friend class IDataNode;
 
-  template <typename A>
-  std::shared_ptr<DataNode<IDataNode, A>> register_output_node(std::string identifier = "") {
-    if (identifier == "") {
-      identifier = uuid::generate_uuid_v4();
-    }
-    auto output_node = std::make_shared<DataNode<IDataNode, A>>(DataNode<IDataNode, A>(identifier));
+  template <typename A> std::shared_ptr<DataNode<IDataNode, A>> register_output_node() {
+    std::string hash_string;
+    std::string identifier = uuid::generate_uuid_v4();
+    _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
+    hash_string +=
+        "(" + std::string(typeid(DataNode<IDataNode, A>).name()) + "){" + type_id + "}" + ": ";
+    hash_string = create_hash_string(hash_string, identifier);
+    auto hash_val = sha256(hash_string);
+    auto output_node = std::make_shared<DataNode<IDataNode, A>>(DataNode<IDataNode, A>());
+    output_node->_hash->assign(hash_val);
+    output_node->_hash_string = hash_string;
+    output_node->_class_scope = _scope;
+
     _output_nodes.push_back(output_node);
-    output_node->_parent_hash = _hash;
+    output_node->_parent_hash = this->_hash;
     output_node->_parent_calc = [](std::shared_ptr<void> onode) {
-      auto parent_hash = std::static_pointer_cast<IDataNode>(onode)->_parent_hash;
+      auto curr_node = std::static_pointer_cast<IDataNode>(onode);
+      auto phash = std::static_pointer_cast<IDataNode>(onode)->_parent_hash;
+      auto parent_hash = std::static_pointer_cast<IDataNode>(onode)->_parent_hash.lock();
       auto parent =
-          std::static_pointer_cast<DataNode<ClassName, T>>(IDataNode::__registry__[parent_hash]);
+          std::static_pointer_cast<DataNode<ClassName, T>>(IDataNode::__registry__[*parent_hash]);
       parent->calculate();
     };
     return output_node;
@@ -185,7 +195,11 @@ public:
 
   static void calculate(std::shared_ptr<DataNode<ClassName, T>> node) { node->calculate(); }
 
-  ~DataNode() { _data_store.clear_data(this); };
+  ~DataNode() {
+    if (this->_hash != nullptr) {
+      _data_store.clear_data(this);
+    }
+  };
 
   void set_data(std::vector<T> &data) {
     _data_store.put_in_store(this, std::make_shared<std::vector<T>>(data));
@@ -194,25 +208,34 @@ public:
   std::vector<T> get_data() {
     auto data = _data_store.retrieve(this);
     if (!data) {
-      _parent_hash != "" ? _parent_calc(shared_from_this()) : calculate();
+      this->_parent_hash.lock() ? this->_parent_calc(shared_from_this()) : calculate();
       data = _data_store.retrieve(this);
     }
     return std::vector<T>(*data);
   }
 
   virtual void calculate() {
-    if (_parent_hash != "") {
+    if (_parent_hash.lock()) {
       _parent_calc(shared_from_this());
     }
   }
 
   template <class... Args> static std::shared_ptr<ClassName> create(Args... args) {
-    auto new_node = std::make_shared<ClassName>(ClassName(args...));
-    if (IDataNode::__registry__.find(new_node->get_hash()) != IDataNode::__registry__.end()) {
-      new_node = std::static_pointer_cast<ClassName>(IDataNode::__registry__[new_node->get_hash()]);
-    } else {
-      IDataNode::__registry__[new_node->get_hash()] = new_node;
+    std::string hash_string;
+    _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
+    hash_string += "(" + std::string(typeid(ClassName).name()) + "){" + type_id + "}" + ": ";
+    hash_string = create_hash_string(hash_string, args...);
+    auto hash_val = sha256(hash_string);
+    if (IDataNode::__registry__.find(hash_val) != IDataNode::__registry__.end()) {
+      return std::static_pointer_cast<ClassName>(IDataNode::__registry__[hash_val]);
     }
+    auto new_node = std::make_shared<ClassName>(ClassName(args...));
+    new_node->_hash->assign(hash_val);
+    new_node->_hash_string = hash_string;
+    new_node->_class_scope = _scope;
+    IDataNode::__registry__[new_node->get_hash()] = new_node;
     return new_node;
   }
 };
+
+} // namespace DataNodes

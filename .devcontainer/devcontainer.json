@@ -8,6 +8,16 @@
 	"features": {
 		"ghcr.io/devcontainers-community/features/bazel:1": {},
 		"ghcr.io/lee-orr/rusty-dev-containers/cargo-llvm-cov:0": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions":[
+				"ms-python.python",
+			 	"njpwerner.autodocstring", 
+				"ms-vscode.cpptools-extension-pack", 
+				"bazelbuild.vscode-bazel",
+			]
+		}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
