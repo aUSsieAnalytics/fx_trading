@@ -37,10 +37,12 @@ TEST(SignalProcessingTest, TestSimpleMovingAverage) {
   auto sma_int = DataNode<SimpleMovingAverage<int>>::create(example_one->output_2, 3);
   auto int_result = sma_int->get_data();
 
-  ASSERT_EQ(double_result.at(0), 1.0);
-  ASSERT_EQ(double_result.at(2), 1.0);
-  ASSERT_EQ(double_result.at(5), 2.0);
-  ASSERT_EQ(int_result.at(0), 1);
-  ASSERT_EQ(int_result.at(2), 1);
-  ASSERT_EQ(int_result.at(5), 2);
+  EXPECT_NEAR(double_result.at(0), 1.0, 1e-4);
+  EXPECT_NEAR(double_result.at(2), 1.0, 1e-4);
+  EXPECT_NEAR(double_result.at(3), 1.3333, 1e-4);
+  EXPECT_NEAR(double_result.at(5), 2.0, 1e-4);
+  EXPECT_NEAR(int_result.at(0), 1.0, 1e-4);
+  EXPECT_NEAR(int_result.at(2), 1.0, 1e-4);
+  EXPECT_NEAR(int_result.at(3), 1.33333, 1e-4);
+  EXPECT_NEAR(int_result.at(5), 2.0, 1e-4);
 }
