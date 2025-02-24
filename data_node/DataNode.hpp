@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <vector>
 
+namespace DataNodes {
+
 template <typename T> std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector) {
   std::ostringstream oss;
   for (auto &entry : vector) {
@@ -235,3 +237,5 @@ public:
     return new_node;
   }
 };
+
+} // namespace DataNodes

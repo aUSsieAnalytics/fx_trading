@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 using namespace std;
+using namespace DataNodes;
 
 class ExampleNode : public DataNode<ExampleNode, double> {
   double _value1;

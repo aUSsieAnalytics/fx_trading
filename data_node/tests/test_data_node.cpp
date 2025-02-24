@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 using namespace std;
+using namespace DataNodes;
 
 TEST(DataTest, Initialization) {
   IDataNode::clear_registry();

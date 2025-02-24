@@ -4,6 +4,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace DataNodes;
 
 class ExampleNode : public DataNode<ExampleNode, double> {
   std::vector<double> _double_vector;

@@ -1,6 +1,8 @@
 #pragma once
 #include "DataNode.hpp"
 
+namespace DataNodes {
+
 template <typename A> class SimpleMovingAverage : public DataNode<SimpleMovingAverage<A>, double> {
   std::shared_ptr<DataNode<IDataNode, A>> _input_data;
   unsigned int _window_size;
@@ -27,3 +29,4 @@ public:
     this->set_data(sma);
   }
 };
+} // namespace DataNodes
