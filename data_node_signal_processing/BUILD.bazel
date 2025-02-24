@@ -4,19 +4,5 @@ cc_library(
     srcs = [],
     hdrs = glob(["*.hpp"]),
     visibility = ["//visibility:public"],
-)
-
-cc_test(
-    name = "signal_processing_tests",
-    srcs = [
-        "tests/test_signal_processing.cpp",
-    ],
-    includes = ["."],
-    size = "small",
-    deps = [
-        "@googletest//:gtest",
-        "@googletest//:gtest_main",
-        "//data_node:data_node",
-        "//data_node_signal_processing:signal_processing"
-    ],
+    includes = ["."]
 )

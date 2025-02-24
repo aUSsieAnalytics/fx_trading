@@ -1,0 +1,13 @@
+cc_test(
+    name = "signal_processing_tests",
+    srcs = [
+        "test_signal_processing.cpp",
+    ],
+    includes = ["."],
+    size = "small",
+    deps = [
+        "//data_node/tests:data_node_test_utils",
+        "//data_node:data_node",
+        "//data_node_signal_processing:signal_processing",
+    ],
+)

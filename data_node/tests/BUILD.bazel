@@ -1,0 +1,27 @@
+cc_library(
+    name = "data_node_test_utils",
+    srcs = [],
+    hdrs = ["data_node_test_utils.hpp"],
+    visibility = ["//visibility:public"],
+    includes = ["."],
+    deps = [
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//data_node:data_node"
+    ]
+)
+
+cc_test(
+    name = "data_node_tests",
+    srcs = [
+        "test_data_node.cpp",
+        "test_example_node.cpp",
+        "test_hashing.cpp",
+    ],
+    includes = ["."],
+    size = "small",
+    deps = [
+        "//data_node:data_node",
+        "//data_node/tests:data_node_test_utils"
+    ],
+)

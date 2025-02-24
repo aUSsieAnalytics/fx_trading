@@ -1,11 +1,11 @@
 #include "DataNode.hpp"
+#include "data_node_test_utils.hpp"
 #include <gtest/gtest.h>
 
 using namespace std;
 using namespace DataNodes;
 
-TEST(DataTest, Initialization) {
-  IDataNode::clear_registry();
+TEST_F(DataNodeTest, Initialization) {
   auto source = DataNode<>::create();
   auto hi_node = DataNode<>::create("hi");
   for (int i = 0; i < 100; i++) {
@@ -37,8 +37,7 @@ TEST(DataTest, Initialization) {
       sha256("(" + string(typeid(IDataNode).name()) + ")" + "{" + DataNode<>::type_id + "}: hi"));
 }
 
-TEST(DataTest, AddSource) {
-  IDataNode::clear_registry();
+TEST_F(DataNodeTest, AddSource) {
   auto root = DataNode<>::create();
   auto second = DataNode<IDataNode, int>::create();
   ASSERT_EQ(root->get_upstream_nodes().size(), 0);
@@ -48,8 +47,7 @@ TEST(DataTest, AddSource) {
   ASSERT_EQ(second->get_downstream_nodes().size(), 1);
 }
 
-TEST(DataTest, CollectLeafNodes) {
-  IDataNode::clear_registry();
+TEST_F(DataNodeTest, CollectLeafNodes) {
   auto root = DataNode<>::create();
   auto leaf1 = DataNode<IDataNode, int>::create();
   auto second = DataNode<>::create("hi");
