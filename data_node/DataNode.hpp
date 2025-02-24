@@ -9,6 +9,14 @@
 #include <unordered_map>
 #include <vector>
 
+template <typename T> std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector) {
+  std::ostringstream oss;
+  for (auto &entry : vector) {
+    oss << entry;
+  }
+  return stream << sha256(oss.str());
+}
+
 template <typename T = std::string, typename... Args>
 std::string create_hash_string(std::string hash_string = "", T t = "", Args... args) {
   std::ostringstream oss;

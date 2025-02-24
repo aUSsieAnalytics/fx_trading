@@ -5,23 +5,23 @@ using namespace std;
 
 class ExampleNode : public DataNode<ExampleNode, double> {
   double _value1;
-  int _value2;
+  int _int_vector;
 
 public:
   std::shared_ptr<DataNode<IDataNode, double>> output_1;
   std::shared_ptr<DataNode<IDataNode, int>> output_2;
 
   ExampleNode(double value1 = 0, int value2 = 0)
-      : DataNode(value2), _value1(value1), _value2(value2) {
+      : DataNode(value2), _value1(value1), _int_vector(value2) {
     output_1 = register_output_node<double>();
     output_2 = register_output_node<int>();
   }
 
   void calculate() override {
-    auto x = std::vector<double>({_value1, static_cast<double>(_value2)});
+    auto x = std::vector<double>({_value1, static_cast<double>(_int_vector)});
     set_data(x);
     output_1->set_data(x);
-    auto y = std::vector<int>({-1, _value2});
+    auto y = std::vector<int>({-1, _int_vector});
     output_2->set_data(y);
   };
 };
