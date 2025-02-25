@@ -9,5 +9,6 @@ cc_test(
         "//data_node/tests:data_node_test_utils",
         "//data_node:data_node",
         "//data_node_signal_processing:signal_processing",
+        "//types:trading_types"
     ],
 )

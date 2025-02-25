@@ -1,6 +1,7 @@
 #include "DataNode.hpp"
 #include "data_node_test_utils.hpp"
 #include "signal_processing.hpp"
+#include "types.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 
@@ -46,6 +47,20 @@ TEST_F(DataNodeTest, TestSimpleMovingAverage) {
   EXPECT_NEAR(int_result.at(2), 1.0, 1e-4);
   EXPECT_NEAR(int_result.at(3), 1.33333, 1e-4);
   EXPECT_NEAR(int_result.at(5), 2.0, 1e-4);
+}
+
+TEST_F(DataNodeTest, TestCandleStickSMA) {
+  std::vector<CandleStick> candlesticks = {};
+  for (int i = 0; i < 5; i++) {
+    candlesticks.push_back(CandleStick(i, i, i, i));
+  }
+
+  auto example_one = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create();
+  example_one->set_data(candlesticks);
+  auto sma = DataNode<SimpleMovingAverage<CandleStick, CandleStick>>::create(example_one, 3);
+  auto result = sma->get_data();
+  EXPECT_NEAR(result.at(0).close, 1.0, 1e-4);
+  EXPECT_NEAR(result.at(2).close, 1.0, 1e-4);
 }
 
 TEST_F(DataNodeTest, TestExponentialMovingAverage) {
