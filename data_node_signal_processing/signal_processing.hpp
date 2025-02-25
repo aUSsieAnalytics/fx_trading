@@ -4,9 +4,9 @@
 namespace DataNodes {
 
 /*
-A simple moving average for a single vector of values. The template value (A) needs to match the
-DataNode type that is passed to the constructor. The SimpleMovingAverage always returns a vector
-of type double.
+A simple moving average for a single vector of values. The template value `InputType` needs to match
+the DataNode type that is passed to the constructor. The SimpleMovingAverage returns a vector of
+type `OutputType` (default `double`).
 
 */
 template <typename InputType, typename OutputType = double>
@@ -40,9 +40,9 @@ public:
 };
 
 /*
-An exponential moving average for a single vector of values. The template value (A) needs to match
-the DataNode type that is passed to the constructor. The ExponentialMovingAverage always returns a
-vector of type double.
+An exponential moving average for a single vector of values. The template value `InputType` needs
+to match the DataNode type that is passed to the constructor. The ExponentialMovingAverage returns a
+vector of type `OutputType` (default `double`).
 
 */
 template <typename InputType, typename OutputType = double>
