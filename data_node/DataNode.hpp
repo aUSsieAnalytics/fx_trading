@@ -195,7 +195,7 @@ public:
 
   static void calculate(std::shared_ptr<DataNode<ClassName, T>> node) { node->calculate(); }
 
-  ~DataNode() {
+  virtual ~DataNode() {
     if (this->_hash != nullptr) {
       _data_store.clear_data(this);
     }
