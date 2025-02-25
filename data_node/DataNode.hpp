@@ -43,6 +43,7 @@ class DataStore {
   std::unordered_map<std::string, std::shared_ptr<void>> _store;
 
 public:
+  ~DataStore() { _store.clear(); }
   DataStore() : _store() {};
 
   template <typename ClassName, typename T> void clear_data(DataNode<ClassName, T> *node) {
