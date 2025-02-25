@@ -9,20 +9,23 @@ DataNode type that is passed to the constructor. The SimpleMovingAverage always 
 of type double.
 
 */
-template <typename A> class SimpleMovingAverage : public DataNode<SimpleMovingAverage<A>, double> {
-  std::shared_ptr<DataNode<IDataNode, A>> _input_data;
+template <typename InputType, typename OutputType = double>
+class SimpleMovingAverage
+    : public DataNode<SimpleMovingAverage<InputType, OutputType>, OutputType> {
+  std::shared_ptr<DataNode<IDataNode, InputType>> _input_data;
   unsigned int _window_size;
 
 public:
-  SimpleMovingAverage(std::shared_ptr<DataNode<IDataNode, A>> node, unsigned int window_size)
-      : DataNode<SimpleMovingAverage<A>, double>(node, window_size), _input_data(node),
-        _window_size(window_size) {}
+  SimpleMovingAverage(std::shared_ptr<DataNode<IDataNode, InputType>> node,
+                      unsigned int window_size)
+      : DataNode<SimpleMovingAverage<InputType, OutputType>, OutputType>(node, window_size),
+        _input_data(node), _window_size(window_size) {}
 
   void calculate() override {
-    std::vector<A> data = _input_data->get_data();
-    std::vector<double> sma = {};
+    std::vector<InputType> data = _input_data->get_data();
+    std::vector<OutputType> sma = {};
     sma.reserve(data.size());
-    double total = 0;
+    OutputType total = OutputType();
     for (unsigned int i = 0; i < data.size(); i++) {
       total += data[i];
       if (i < _window_size) {
@@ -42,19 +45,20 @@ the DataNode type that is passed to the constructor. The ExponentialMovingAverag
 vector of type double.
 
 */
-template <typename A>
-class ExponentialMovingAverage : public DataNode<ExponentialMovingAverage<A>, double> {
-  std::shared_ptr<DataNode<IDataNode, A>> _input_data;
+template <typename InputType, typename OutputType = double>
+class ExponentialMovingAverage
+    : public DataNode<ExponentialMovingAverage<InputType, OutputType>, OutputType> {
+  std::shared_ptr<DataNode<IDataNode, InputType>> _input_data;
   double _factor;
 
 public:
-  ExponentialMovingAverage(std::shared_ptr<DataNode<IDataNode, A>> node, double factor)
-      : DataNode<ExponentialMovingAverage<A>, double>(node, factor), _input_data(node),
-        _factor(factor) {}
+  ExponentialMovingAverage(std::shared_ptr<DataNode<IDataNode, InputType>> node, double factor)
+      : DataNode<ExponentialMovingAverage<InputType, OutputType>, OutputType>(node, factor),
+        _input_data(node), _factor(factor) {}
 
   void calculate() override {
-    std::vector<A> data = _input_data->get_data();
-    std::vector<double> ema = {};
+    std::vector<InputType> data = _input_data->get_data();
+    std::vector<OutputType> ema = {};
     ema.reserve(data.size());
     if (data.size() >= 1) {
       ema.push_back(data[0]);
