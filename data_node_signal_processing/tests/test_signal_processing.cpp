@@ -1,7 +1,7 @@
 #include "DataNode.hpp"
 #include "data_node_test_utils.hpp"
 #include "signal_processing.hpp"
-#include "types.hpp"
+#include "trading_types.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 

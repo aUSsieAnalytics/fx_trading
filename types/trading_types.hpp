@@ -1,4 +1,12 @@
-#include <ctime>
+#pragma once
+
+#include <iostream>
+
+enum CandleStickPrice { OPEN, CLOSE, HIGH, LOW };
+
+// std::ostream &operator<<(std::ostream &stream, CandleStickPrice &price) {
+//   return stream << std::to_string(price);
+// }
 
 struct CandleStick {
   double open;

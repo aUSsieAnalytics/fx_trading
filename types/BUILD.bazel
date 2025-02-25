@@ -1,6 +1,6 @@
 cc_library(
     name = "trading_types",
-    hdrs = ["types.hpp"],
+    hdrs = ["trading_types.hpp"],
     visibility = ["//visibility:public"],
     includes = ["."]
 )

@@ -1,0 +1,12 @@
+cc_library(
+    name = "trader",
+    deps = [
+        "//data_node:data_node",
+        "//data_node_signal_processing:signal_processing",
+        "//types:trading_types"
+        ],
+    srcs = [],
+    hdrs = ["CandleStickSplitter.hpp"],
+    visibility = ["//visibility:public"],
+    includes = ["."]
+)
