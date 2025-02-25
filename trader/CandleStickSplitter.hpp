@@ -40,8 +40,6 @@ public:
         parsed_data.push_back(candle.low);
       }
       break;
-    default:
-      break;
     }
     set_data(parsed_data);
   }
