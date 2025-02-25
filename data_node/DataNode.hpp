@@ -3,6 +3,7 @@
 #include "sha256.hpp"
 #include "uuid.hpp"
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <sstream>
@@ -43,19 +44,24 @@ class DataStore {
   std::unordered_map<std::string, std::shared_ptr<void>> _store;
 
 public:
+  ~DataStore() { _store.clear(); }
   DataStore() : _store() {};
 
   template <typename ClassName, typename T> void clear_data(DataNode<ClassName, T> *node) {
-    if (_store.find(node->get_hash()) != _store.end()) {
-      _store.erase(node->get_hash());
+    if (_store.size() == 0) {
+      return;
+    }
+    if (this->_store.find(node->get_hash()) != this->_store.end()) {
+      this->_store.erase(node->get_hash());
     }
   }
 
 private:
   template <typename ClassName, typename T> friend class DataNode;
+
   template <typename ClassName, typename T>
   void put_in_store(DataNode<ClassName, T> *node, std::shared_ptr<std::vector<T>> data) {
-    _store[node->get_hash()] = data;
+    _store[node->get_hash()] = std::static_pointer_cast<void>(data);
   }
 
   template <typename ClassName, typename T>
