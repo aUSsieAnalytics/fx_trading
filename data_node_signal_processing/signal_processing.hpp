@@ -45,19 +45,20 @@ the DataNode type that is passed to the constructor. The ExponentialMovingAverag
 vector of type double.
 
 */
-template <typename A>
-class ExponentialMovingAverage : public DataNode<ExponentialMovingAverage<A>, double> {
-  std::shared_ptr<DataNode<IDataNode, A>> _input_data;
+template <typename InputType, typename OutputType = double>
+class ExponentialMovingAverage
+    : public DataNode<ExponentialMovingAverage<InputType, OutputType>, OutputType> {
+  std::shared_ptr<DataNode<IDataNode, InputType>> _input_data;
   double _factor;
 
 public:
-  ExponentialMovingAverage(std::shared_ptr<DataNode<IDataNode, A>> node, double factor)
-      : DataNode<ExponentialMovingAverage<A>, double>(node, factor), _input_data(node),
-        _factor(factor) {}
+  ExponentialMovingAverage(std::shared_ptr<DataNode<IDataNode, InputType>> node, double factor)
+      : DataNode<ExponentialMovingAverage<InputType, OutputType>, OutputType>(node, factor),
+        _input_data(node), _factor(factor) {}
 
   void calculate() override {
-    std::vector<A> data = _input_data->get_data();
-    std::vector<double> ema = {};
+    std::vector<InputType> data = _input_data->get_data();
+    std::vector<OutputType> ema = {};
     ema.reserve(data.size());
     if (data.size() >= 1) {
       ema.push_back(data[0]);

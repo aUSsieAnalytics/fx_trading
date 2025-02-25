@@ -52,15 +52,17 @@ TEST_F(DataNodeTest, TestSimpleMovingAverage) {
 TEST_F(DataNodeTest, TestCandleStickSMA) {
   std::vector<CandleStick> candlesticks = {};
   for (int i = 0; i < 5; i++) {
-    candlesticks.push_back(CandleStick(i, i, i, i));
+    candlesticks.push_back(CandleStick(i, i + 1, i + 2, i + 3));
   }
 
   auto example_one = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create();
   example_one->set_data(candlesticks);
   auto sma = DataNode<SimpleMovingAverage<CandleStick, CandleStick>>::create(example_one, 3);
   auto result = sma->get_data();
+  EXPECT_NEAR(result.at(0).open, 0.0, 1e-4);
   EXPECT_NEAR(result.at(0).close, 1.0, 1e-4);
-  EXPECT_NEAR(result.at(2).close, 1.0, 1e-4);
+  EXPECT_NEAR(result.at(4).open, 3.0, 1e-4);
+  EXPECT_NEAR(result.at(4).close, 4.0, 1e-4);
 }
 
 TEST_F(DataNodeTest, TestExponentialMovingAverage) {
@@ -80,4 +82,20 @@ TEST_F(DataNodeTest, TestExponentialMovingAverage) {
   EXPECT_NEAR(int_result.at(2), 1.0, 1e-4);
   EXPECT_NEAR(int_result.at(3), 1.5, 1e-4);
   EXPECT_NEAR(int_result.at(5), 1.875, 1e-4);
+}
+
+TEST_F(DataNodeTest, TestCandleStickEMA) {
+  std::vector<CandleStick> candlesticks = {};
+  for (int i = 0; i < 5; i++) {
+    candlesticks.push_back(CandleStick(i, i + 1, i + 2, i + 3));
+  }
+
+  auto example_one = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create();
+  example_one->set_data(candlesticks);
+  auto ema = DataNode<ExponentialMovingAverage<CandleStick, CandleStick>>::create(example_one, 0.5);
+  auto result = ema->get_data();
+  EXPECT_NEAR(result.at(0).open, 0.0, 1e-4);
+  EXPECT_NEAR(result.at(0).close, 1.0, 1e-4);
+  EXPECT_NEAR(result.at(4).open, 3.0625, 1e-4);
+  EXPECT_NEAR(result.at(4).close, 4.0625, 1e-4);
 }

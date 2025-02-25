@@ -13,119 +13,119 @@ struct CandleStick {
 
   template <typename T> CandleStick operator+(const T &rhs) const {
     return {
-        this->close + rhs,
         this->open + rhs,
+        this->close + rhs,
         this->high + rhs,
         this->low + rhs,
     };
   }
 
   CandleStick operator+(const CandleStick &rhs) const {
-    return {this->close + rhs.close, this->open + rhs.open, this->high + rhs.high,
+    return {this->open + rhs.open, this->close + rhs.close, this->high + rhs.high,
             this->low + rhs.low};
   }
 
   template <typename T> CandleStick operator-(const T &rhs) const {
     return {
-        this->close - rhs,
         this->open - rhs,
+        this->close - rhs,
         this->high - rhs,
         this->low - rhs,
     };
   }
 
   CandleStick operator-(const CandleStick &rhs) const {
-    return {this->close - rhs.close, this->open - rhs.open, this->high - rhs.high,
+    return {this->open - rhs.open, this->close - rhs.close, this->high - rhs.high,
             this->low - rhs.low};
   }
 
   template <typename T> CandleStick operator*(const T &rhs) const {
     return {
-        this->close * rhs,
         this->open * rhs,
+        this->close * rhs,
         this->high * rhs,
         this->low * rhs,
     };
   }
 
   CandleStick operator*(const CandleStick &rhs) const {
-    return {this->close * rhs.close, this->open * rhs.open, this->high * rhs.high,
+    return {this->open * rhs.open, this->close * rhs.close, this->high * rhs.high,
             this->low * rhs.low};
   }
 
   template <typename T> CandleStick operator/(const T &rhs) const {
     return {
-        this->close / rhs,
         this->open / rhs,
+        this->close / rhs,
         this->high / rhs,
         this->low / rhs,
     };
   }
 
   CandleStick operator/(const CandleStick &rhs) const {
-    return {this->close / rhs.close, this->open / rhs.open, this->high / rhs.high,
+    return {this->open / rhs.open, this->close / rhs.close, this->high / rhs.high,
             this->low / rhs.low};
   }
 
   template <typename T> CandleStick &operator+=(const T &rhs) {
-    this->close += rhs;
     this->open += rhs;
+    this->close += rhs;
     this->high += rhs;
     this->low += rhs;
     return *this;
   }
 
   CandleStick &operator+=(const CandleStick &rhs) {
-    this->close += rhs.close;
     this->open += rhs.open;
+    this->close += rhs.close;
     this->high += rhs.high;
     this->low += rhs.low;
     return *this;
   }
 
   template <typename T> CandleStick &operator-=(const T &rhs) {
-    this->close -= rhs;
     this->open -= rhs;
+    this->close -= rhs;
     this->high -= rhs;
     this->low -= rhs;
     return *this;
   }
 
   CandleStick &operator-=(const CandleStick &rhs) {
-    this->close -= rhs.close;
     this->open -= rhs.open;
+    this->close -= rhs.close;
     this->high -= rhs.high;
     this->low -= rhs.low;
     return *this;
   }
 
   template <typename T> CandleStick &operator/=(const T &rhs) {
-    this->close /= rhs;
     this->open /= rhs;
+    this->close /= rhs;
     this->high /= rhs;
     this->low /= rhs;
     return *this;
   }
 
   CandleStick &operator/=(const CandleStick &rhs) {
-    this->close /= rhs.close;
     this->open /= rhs.open;
+    this->close /= rhs.close;
     this->high /= rhs.high;
     this->low /= rhs.low;
     return *this;
   }
 
   template <typename T> CandleStick &operator*=(const T &rhs) {
-    this->close *= rhs;
     this->open *= rhs;
+    this->close *= rhs;
     this->high *= rhs;
     this->low *= rhs;
     return *this;
   }
 
   CandleStick &operator*=(const CandleStick &rhs) {
-    this->close *= rhs.close;
     this->open *= rhs.open;
+    this->close *= rhs.close;
     this->high *= rhs.high;
     this->low *= rhs.low;
     return *this;
