@@ -52,7 +52,7 @@ TEST_F(DataNodeTest, TestSimpleMovingAverage) {
 TEST_F(DataNodeTest, TestCandleStickSMA) {
   std::vector<CandleStick> candlesticks = {};
   for (int i = 0; i < 5; i++) {
-    candlesticks.push_back(CandleStick(i, i + 1, i + 2, i + 3));
+    candlesticks.emplace_back(CandleStick(i, i + 1, i + 2, i + 3));
   }
 
   auto example_one = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create();
@@ -87,7 +87,7 @@ TEST_F(DataNodeTest, TestExponentialMovingAverage) {
 TEST_F(DataNodeTest, TestCandleStickEMA) {
   std::vector<CandleStick> candlesticks = {};
   for (int i = 0; i < 5; i++) {
-    candlesticks.push_back(CandleStick(i, i + 1, i + 2, i + 3));
+    candlesticks.emplace_back(CandleStick(i, i + 1, i + 2, i + 3));
   }
 
   auto example_one = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create();
