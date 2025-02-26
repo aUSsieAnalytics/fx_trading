@@ -19,8 +19,8 @@ public:
   SimpleMovingAverage(std::shared_ptr<DataNode<IDataNode, InputType>> node,
                       unsigned int window_size)
       : DataNode<SimpleMovingAverage<InputType, OutputType>, OutputType>(node, window_size),
-        _input_data(node), _window_size(window_size) {
-    this->add_upstream_node(node);
+        _window_size(window_size) {
+    _input_data = this->add_upstream_node(node);
   }
 
   void calculate() override {
@@ -56,8 +56,8 @@ class ExponentialMovingAverage
 public:
   ExponentialMovingAverage(std::shared_ptr<DataNode<IDataNode, InputType>> node, double factor)
       : DataNode<ExponentialMovingAverage<InputType, OutputType>, OutputType>(node, factor),
-        _input_data(node), _factor(factor) {
-    this->add_upstream_node(node);
+        _factor(factor) {
+    _input_data = this->add_upstream_node(node);
   }
 
   void calculate() override {

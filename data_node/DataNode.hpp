@@ -159,9 +159,11 @@ public:
 
   std::string get_scope() { return _class_scope; }
 
-  void add_upstream_node(DataNodeShrPtr node) {
+  template <typename ClassName>
+  std::shared_ptr<ClassName> add_upstream_node(std::shared_ptr<ClassName> node) {
     _upstream_nodes.push_back(node);
     node->_downstream_node_hashes.push_back(_hash);
+    return node;
   }
 
   std::string get_hash() { return *_hash; }
