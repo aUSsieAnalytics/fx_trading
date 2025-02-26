@@ -1,6 +1,8 @@
 cc_library(
     name = "signal_processing",
-    deps = ["//data_node:data_node"],
+    deps = [
+        "//data_node:data_node",
+    ],
     srcs = [],
     hdrs = glob(["*.hpp"]),
     visibility = ["//visibility:public"],
