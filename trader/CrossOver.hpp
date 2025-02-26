@@ -29,10 +29,7 @@ class CrossOver : public DataNode<CrossOver<InputType1, InputType2>, bool> {
 
   template <typename A, typename B>
   bool initial_direction(const std::vector<A> &data1, const std::vector<B> &data2) {
-    if (0 < data1.size() && 0 < data2.size()) {
-      return data1[0] < data2[0];
-    }
-    return false;
+    return data1[0] < data2[0];
   }
 
   bool initial_direction(const std::vector<CandleStick> &data1,
