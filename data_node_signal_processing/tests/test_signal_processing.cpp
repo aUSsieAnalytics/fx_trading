@@ -115,4 +115,17 @@ TEST_F(DataNodeTest, TestCrossOvers) {
   ASSERT_EQ(crossovers.at(4), false);
   ASSERT_EQ(crossovers.at(5), true);
   ASSERT_EQ(crossovers.at(6), true);
+
+  double_vector.clear();
+  example_one = DataNode<ExampleNode>::create(double_vector, int_vector);
+  crossover_node =
+      DataNode<CrossOver<double, int>>::create(example_one->output_1, example_one->output_2);
+  crossovers = crossover_node->get_data();
+  ASSERT_EQ(crossovers.at(0), false);
+  ASSERT_EQ(crossovers.at(1), false);
+  ASSERT_EQ(crossovers.at(2), false);
+  ASSERT_EQ(crossovers.at(3), false);
+  ASSERT_EQ(crossovers.at(4), false);
+  ASSERT_EQ(crossovers.at(5), false);
+  ASSERT_EQ(crossovers.at(6), false);
 }
