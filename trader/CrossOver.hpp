@@ -40,8 +40,10 @@ class CrossOver : public DataNode<CrossOver<InputType1, InputType2>, bool> {
 public:
   CrossOver(std::shared_ptr<DataNode<IDataNode, InputType1>> node1,
             std::shared_ptr<DataNode<IDataNode, InputType2>> node2)
-      : DataNode<CrossOver<InputType1, InputType2>, bool>(node1, node2), _input_data1(node1),
-        _input_data2(node2) {}
+      : DataNode<CrossOver<InputType1, InputType2>, bool>(node1, node2) {
+    _input_data1 = this->add_upstream_node(node1);
+    _input_data2 = this->add_upstream_node(node2);
+  }
 
   void calculate() override {
     std::vector<InputType1> data1 = _input_data1->get_data();
