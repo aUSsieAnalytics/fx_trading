@@ -232,7 +232,7 @@ constexpr std::array<std::pair<ForexPair, const char *>, 67> forex_pair_to_strin
      {USDPLN, "USDPLN"}, {USDSEK, "USDSEK"}, {USDSGD, "USDSGD"}, {USDTHB, "USDTHB"},
      {USDTRY, "USDTRY"}, {USDZAR, "USDZAR"}, {ZARJPY, "ZARJPY"}}};
 
-constexpr const std::string forex_lookup(ForexPair pair) {
+constexpr const std::string_view forex_lookup(ForexPair pair) {
   return forex_pair_to_string[pair].second;
 }
 
@@ -241,5 +241,5 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const ForexPair &
 }
 
 namespace std {
-constexpr const std::string to_string(const ForexPair &pair) { return forex_lookup(pair); }
+constexpr const std::string_view to_string(const ForexPair &pair) { return forex_lookup(pair); }
 } // namespace std
