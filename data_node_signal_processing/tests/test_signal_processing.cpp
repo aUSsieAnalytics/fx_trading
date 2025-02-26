@@ -99,3 +99,33 @@ TEST_F(DataNodeTest, TestCandleStickEMA) {
   EXPECT_NEAR(result.at(4).open, 3.0625, 1e-4);
   EXPECT_NEAR(result.at(4).close, 4.0625, 1e-4);
 }
+
+TEST_F(DataNodeTest, TestCrossOvers) {
+  std::vector<double> double_vector = {1.0, 1.0, 1.1, 2.1, 2.1, 3.0, 4.0};
+  std::vector<int> int_vector = {0, 1, 1, 2, 2, 4, 3};
+  auto example_one = DataNode<ExampleNode>::create(double_vector, int_vector);
+  auto crossover_node =
+      DataNode<CrossOver<double, int>>::create(example_one->output_1, example_one->output_2);
+  auto crossovers = crossover_node->get_data();
+
+  ASSERT_EQ(crossovers.at(0), false);
+  ASSERT_EQ(crossovers.at(1), false);
+  ASSERT_EQ(crossovers.at(2), false);
+  ASSERT_EQ(crossovers.at(3), false);
+  ASSERT_EQ(crossovers.at(4), false);
+  ASSERT_EQ(crossovers.at(5), true);
+  ASSERT_EQ(crossovers.at(6), true);
+
+  double_vector.clear();
+  example_one = DataNode<ExampleNode>::create(double_vector, int_vector);
+  crossover_node =
+      DataNode<CrossOver<double, int>>::create(example_one->output_1, example_one->output_2);
+  crossovers = crossover_node->get_data();
+  ASSERT_EQ(crossovers.at(0), false);
+  ASSERT_EQ(crossovers.at(1), false);
+  ASSERT_EQ(crossovers.at(2), false);
+  ASSERT_EQ(crossovers.at(3), false);
+  ASSERT_EQ(crossovers.at(4), false);
+  ASSERT_EQ(crossovers.at(5), false);
+  ASSERT_EQ(crossovers.at(6), false);
+}

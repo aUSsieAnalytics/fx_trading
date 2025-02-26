@@ -43,9 +43,13 @@ class DataStore {
   std::unordered_map<std::string, std::shared_ptr<void>> _store;
 
 public:
+  ~DataStore() { _store.clear(); }
   DataStore() : _store() {};
 
   template <typename ClassName, typename T> void clear_data(DataNode<ClassName, T> *node) {
+    if (_store.size() == 0) {
+      return;
+    }
     if (_store.find(node->get_hash()) != _store.end()) {
       _store.erase(node->get_hash());
     }
@@ -53,6 +57,7 @@ public:
 
 private:
   template <typename ClassName, typename T> friend class DataNode;
+
   template <typename ClassName, typename T>
   void put_in_store(DataNode<ClassName, T> *node, std::shared_ptr<std::vector<T>> data) {
     _store[node->get_hash()] = data;
@@ -195,7 +200,7 @@ public:
 
   static void calculate(std::shared_ptr<DataNode<ClassName, T>> node) { node->calculate(); }
 
-  ~DataNode() {
+  virtual ~DataNode() {
     if (this->_hash != nullptr) {
       _data_store.clear_data(this);
     }
