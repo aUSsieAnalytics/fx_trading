@@ -12,7 +12,9 @@ class CandleStickSplitter : public DataNode<CandleStickSplitter, double> {
 public:
   CandleStickSplitter(std::shared_ptr<DataNode<IDataNode, CandleStick>> node,
                       CandleStickPrice const price)
-      : DataNode<CandleStickSplitter, double>(node, price), _node(node), _price(price) {}
+      : DataNode<CandleStickSplitter, double>(node, price), _node(node), _price(price) {
+    this->add_upstream_node(node);
+  }
 
   void calculate() override {
     auto data = _node->get_data();

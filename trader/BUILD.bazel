@@ -8,7 +8,8 @@ cc_library(
     srcs = [],
     hdrs = [
         "CandleStickSplitter.hpp",
-        "CrossOver.hpp"
+        "CrossOver.hpp",
+        "ForexInstrument.hpp"
     ],
     visibility = ["//visibility:public"],
     includes = ["."]
