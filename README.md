@@ -1,14 +1,11 @@
 This repo currently just holds the start to a simulator for Forex backtesting... a more in depth readme can come later after things are more mature and organized.
 
 ## Setup
-**Use the devcontainer**. Or if need be:
+**Use the devcontainer**. Or if need be (mac):
 
 ```bash
-brew install bazel
-brew install buildifier
-brew install googletest  # maybe not needed, idk if bazel will take of this
-brew install lcov
-brew install git-lfs
+brew install bazel buildifier googletest lcov nlohmann-json spdlog git-lfs
+
 git lfs install # from repo folder
 ```
 
