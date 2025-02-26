@@ -172,10 +172,6 @@ template <typename ClassName, typename T> class DataNode : public IDataNode {
   void _calculate() { _data_store.put_in_store(calculate()); }
 
 public:
-  friend std::ostream &operator<<(std::ostream &stream, DataNode<ClassName, T> &node) {
-    return stream << node._hash_string;
-  }
-
   static inline const std::string type_id = typeid(T).name();
 
   template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...), _data(){};
