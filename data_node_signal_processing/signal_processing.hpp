@@ -70,6 +70,11 @@ public:
   }
 };
 
+/*
+Check if two vectors of values cross each other. The template values `InputType1`,`InputType2` need
+to match the DataNode types that are passed to the constructor..
+
+*/
 template <typename InputType1, typename InputType2>
 class CrossOver : public DataNode<CrossOver<InputType1, InputType2>, bool> {
   std::shared_ptr<DataNode<IDataNode, InputType1>> _input_data1;
