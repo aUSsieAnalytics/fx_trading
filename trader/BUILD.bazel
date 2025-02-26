@@ -6,7 +6,10 @@ cc_library(
         "//types:trading_types"
         ],
     srcs = [],
-    hdrs = ["CandleStickSplitter.hpp"],
+    hdrs = [
+        "CandleStickSplitter.hpp",
+        "CrossOver.hpp"
+    ],
     visibility = ["//visibility:public"],
     includes = ["."]
 )
