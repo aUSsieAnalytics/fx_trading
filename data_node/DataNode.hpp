@@ -39,6 +39,11 @@ template <typename ClassName = IDataNode, typename T = double> class DataNode;
 typedef std::shared_ptr<IDataNode> DataNodeShrPtr;
 typedef std::weak_ptr<IDataNode> DataNodeWeakPtr;
 
+template <typename X, typename Y>
+std::ostream &operator<<(std::ostream &stream, const std::shared_ptr<DataNode<X, Y>> &node) {
+  return stream << "DataNode{" << node->get_hash() << "}";
+}
+
 class DataStore {
   std::unordered_map<std::string, std::shared_ptr<void>> _store;
 
