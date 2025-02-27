@@ -1,0 +1,13 @@
+cc_library(
+    name = "logger",
+    deps = [
+        "@spdlog//:spdlog",
+        "@nlohmann_json//:json",
+        ],
+    srcs = [],
+    hdrs = [
+        "Logger.hpp"
+    ],
+    visibility = ["//visibility:public"],
+    includes = ["."]
+)

@@ -1,0 +1,13 @@
+cc_test(
+    name = "logger_tests",
+    srcs = [
+        "test_logger.cpp",
+    ],
+    includes = ["."],
+    size = "small",
+    deps = [
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//logger:logger"
+    ],
+)
