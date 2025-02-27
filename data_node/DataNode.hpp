@@ -197,7 +197,6 @@ public:
     output_node->_parent_hash = this->_hash;
     output_node->_parent_calc = [](std::shared_ptr<void> onode) {
       auto curr_node = std::static_pointer_cast<IDataNode>(onode);
-      auto phash = std::static_pointer_cast<IDataNode>(onode)->_parent_hash;
       auto parent_hash = std::static_pointer_cast<IDataNode>(onode)->_parent_hash.lock();
       auto parent =
           std::static_pointer_cast<DataNode<ClassName, T>>(IDataNode::__registry__[*parent_hash]);
