@@ -11,8 +11,17 @@ class Logger : public spdlog::logger {
     if (key == "" && val == "") {
       return;
     }
-    this->_extras[key] = val;
+    this->_extras["extras"][key] = val;
     add_to_extras(args...);
+  }
+
+  std::string adjust_message(std::string msg) {
+    if (*(this->_serialize)) {
+      this->_extras["message"] = msg;
+      msg = this->_extras.dump();
+      msg.erase(0, 1);
+      this->_extras.erase("message");
+    }
   }
 
 public:
@@ -44,14 +53,7 @@ public:
     return new_logger;
   }
 
-  void info(std::string msg) {
-    if (*(this->_serialize)) {
-      nlohmann::json new_extras;
-      new_extras["extras"] = this->_extras;
-      new_extras["message"] = msg;
-      msg = new_extras.dump();
-      msg.erase(0, 1);
-    }
-    return spdlog::logger::info(msg);
-  }
+  void info(std::string msg) { return spdlog::logger::info(this->adjust_message(msg)); }
+  void debug(std::string msg) { return spdlog::logger::debug(this->adjust_message(msg)); }
+  void error(std::string msg) { return spdlog::logger::error(this->adjust_message(msg)); }
 };
