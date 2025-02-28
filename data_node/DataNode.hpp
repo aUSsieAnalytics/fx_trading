@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Logger.hpp"
 #include "sha256.hpp"
 #include "uuid.hpp"
 #include <functional>
@@ -90,6 +91,7 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   std::function<void(std::shared_ptr<void> onode)> _parent_calc;
   std::shared_ptr<std::string> _hash;
   std::string _hash_string;
+  std::shared_ptr<StructuredLogger> _base_logger;
 
   template <typename ClassName, typename T> friend class DataNode;
 
@@ -129,6 +131,7 @@ protected:
 
 public:
   static void clear_registry() { IDataNode::__registry__.clear(); }
+  static void set_logger(std::shared_ptr<StructuredLogger> logger) { _base_logger.assign(logger); }
 
   class ScopeLock {
   public:
