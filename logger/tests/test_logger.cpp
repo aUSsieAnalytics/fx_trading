@@ -13,29 +13,23 @@ TEST(GeneralTest, TestLogger) {
   auto new_logger2 = new_logger->bind("number", 30);
   new_logger->get_spdlogger()->set_level(spdlog::level::debug);
 
-  logger->info("hi");
-  new_logger->info("ho");
-  separate_logger->info("hello");
-  logger->debug("hi");
-  new_logger->debug("ho");
-  separate_logger->debug("hello");
+  auto print = [&]() {
+    logger->info("hi");
+    new_logger->info("ho");
+    separate_logger->info("hello");
+    logger->debug("hi");
+    new_logger->debug("ho");
+    separate_logger->debug("hello");
+    logger->error("hi");
+    new_logger->error("ho");
+    separate_logger->error("hello");
+  };
+
+  print();
 
   logger->serialize();
-
-  logger->info("hi");
-  new_logger->info("ho");
-  new_logger2->info("wazzup");
-  separate_logger->info("hello");
-  logger->debug("hi");
-  new_logger->debug("ho");
-  separate_logger->debug("hello");
+  print();
 
   logger->serialize(false);
-
-  logger->info("hi");
-  new_logger->info("ho");
-  separate_logger->info("hello");
-  logger->debug("hi");
-  new_logger->debug("ho");
-  separate_logger->debug("hello");
+  print();
 }

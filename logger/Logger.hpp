@@ -11,7 +11,7 @@ void add_to_extras(nlohmann::json &extras, K key = "", V val = "", Args... args)
 }
 
 class Logger {
-  static inline std::string _default_pattern = "[%Y-%m-%d %H:%M:%S:%e][%l]%v";
+  static inline std::string _default_pattern = "[%Y-%m-%d %H:%M:%S:%e][%^%l%$]%v";
   std::shared_ptr<bool> _serialize;
   std::vector<nlohmann::json> _extras_patch_list;
   std::shared_ptr<spdlog::logger> _logger;
