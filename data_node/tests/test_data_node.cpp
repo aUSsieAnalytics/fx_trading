@@ -13,28 +13,20 @@ TEST_F(DataNodeTest, Initialization) {
   }
   string hash = source->get_hash();
   ASSERT_EQ(hash, DataNode<>::create()->get_hash());
-  string blah = "(" + string(typeid(IDataNode).name()) + ")" + "{" + DataNode<>::type_id + "}: ";
-  ASSERT_EQ(hash, sha256("(" + string(typeid(IDataNode).name()) + ")" + "{" + DataNode<>::type_id +
-                         "}: "));
+  string blah = "(DataNode<IDataNode, double>): ";
+  ASSERT_EQ(hash, sha256(blah));
   ASSERT_NE(hash, hi_node->get_hash());
-  ASSERT_EQ(
-      DataNode<>::create("hi")->get_hash(),
-      sha256("(" + string(typeid(IDataNode).name()) + ")" + "{" + DataNode<>::type_id + "}: hi"));
+  ASSERT_EQ(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, double>): hi"));
   {
     // test scoping
     auto x = IDataNode::ScopeLock("local");
-    ASSERT_NE(
-        DataNode<>::create("hi")->get_hash(),
-        sha256("(" + string(typeid(IDataNode).name()) + ")" + "{" + DataNode<>::type_id + "}: hi"));
+    ASSERT_NE(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, double>): hi"));
     ASSERT_EQ(DataNode<>::create("hi")->get_hash(),
-              sha256("local: (" + string(typeid(IDataNode).name()) + ")" + "{" +
-                     DataNode<>::type_id + "}: hi"));
+              sha256("local: (DataNode<IDataNode, double>): hi"));
     ASSERT_EQ(DataNode<>::create("hi")->get_scope(), "local");
   }
   // check that scope was cleared
-  ASSERT_EQ(
-      DataNode<>::create("hi")->get_hash(),
-      sha256("(" + string(typeid(IDataNode).name()) + ")" + "{" + DataNode<>::type_id + "}: hi"));
+  ASSERT_EQ(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, double>): hi"));
 }
 
 TEST_F(DataNodeTest, AddSource) {

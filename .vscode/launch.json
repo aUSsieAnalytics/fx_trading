@@ -157,7 +157,7 @@
       "cwd": "${workspaceFolder}",
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/private/var/tmp/_bazel_peter/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/private/var/tmp/_bazel_peter/991743812555cf9fccebddb0c55f713b/execroot/_main": "${workspaceFolder}"
       }
     },
     {
@@ -171,7 +171,7 @@
       "cwd": "${workspaceFolder}",
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/private/var/tmp/_bazel_peter/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/private/var/tmp/_bazel_peter/991743812555cf9fccebddb0c55f713b/execroot/_main": "${workspaceFolder}"
       }
     },
     {
@@ -185,7 +185,7 @@
       "cwd": "${workspaceFolder}",
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/private/var/tmp/_bazel_peter/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/private/var/tmp/_bazel_peter/991743812555cf9fccebddb0c55f713b/execroot/_main": "${workspaceFolder}"
       }
     }
   ]
