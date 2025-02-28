@@ -1,6 +1,7 @@
 #include "Logger.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 TEST(GeneralTest, TestLogger) {
   auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();

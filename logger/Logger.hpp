@@ -1,7 +1,4 @@
-#include <any>
-#include <functional>
 #include <nlohmann/json.hpp>
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 template <typename K = std::string, typename V = std::string, typename... Args>
