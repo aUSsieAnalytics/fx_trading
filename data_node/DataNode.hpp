@@ -19,9 +19,9 @@ template <typename T> std::string exec(const T *cmd) {
   std::array<char, 256> buffer;
   std::string result;
   std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-  if (!pipe) {
-    throw std::runtime_error("popen() failed!");
-  }
+  // if (!pipe) {
+  //   throw std::runtime_error("popen() failed!");
+  // }
   while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
     result += buffer.data();
   }
