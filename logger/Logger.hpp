@@ -11,9 +11,11 @@ void add_to_extras(nlohmann::json &extras, K key = "", V val = "", Args... args)
 }
 
 class Logger {
+  static inline std::string _default_pattern = "[%Y-%m-%d %H:%M:%S:%e][%l]%v";
   std::shared_ptr<bool> _serialize;
   std::vector<nlohmann::json> _extras_patch_list;
   std::shared_ptr<spdlog::logger> _logger;
+  std::string _local_name;
 
   std::string adjust_message(std::string msg) {
     if (*(this->_serialize)) {
@@ -24,39 +26,46 @@ class Logger {
           extras[key] = val;
         }
       }
+      extras["logger_name"] = this->_local_name;
       msg = extras.dump();
       msg.erase(0, 1);
+    } else {
+      msg = "[" + this->_local_name + "] " + msg;
     }
     return msg;
   }
 
 public:
   template <typename T> Logger(const std::string &name, T sinks, nlohmann::json extras = {}) {
-    _extras_patch_list = {extras};
+    extras.size() > 0 ? _extras_patch_list = {extras} : _extras_patch_list = {};
     _logger = std::make_shared<spdlog::logger>(name, sinks);
+    _logger->set_pattern(Logger::_default_pattern);
     _serialize = std::make_shared<bool>(false);
+    _local_name = name;
   }
 
   template <typename T>
   Logger(const std::string &name, T sinks_start, T sinks_end, nlohmann::json extras = {}) {
-    _extras_patch_list = {extras};
+    extras.size() > 0 ? _extras_patch_list = {extras} : _extras_patch_list = {};
     _logger = std::make_shared<spdlog::logger>(name, sinks_start, sinks_end);
+    _logger->set_pattern(Logger::_default_pattern);
     _serialize = std::make_shared<bool>(false);
+    _local_name = name;
   }
 
   Logger(const Logger &logger) {
     _logger = logger._logger;
     _serialize = logger._serialize;
     _extras_patch_list = logger._extras_patch_list;
+    _local_name = logger._local_name;
   }
 
   std::shared_ptr<spdlog::logger> get_spdlogger() { return _logger; }
 
   void serialize(bool on = true) {
     *_serialize = on;
-    on ? this->_logger->set_pattern(
-             "{\"timestamp\":\"%Y-%m-%d %H:%M:%S\",\"level\":\"%l\",\"logger_name\":\"%n\",%v")
-       : this->_logger->set_pattern("%+");
+    on ? this->_logger->set_pattern("{\"timestamp\":\"%Y-%m-%d %H:%M:%S\",\"level\":\"%l\",%v")
+       : this->_logger->set_pattern(Logger::_default_pattern);
   }
 
   template <typename... Args> std::shared_ptr<Logger> bind(Args... args) {
