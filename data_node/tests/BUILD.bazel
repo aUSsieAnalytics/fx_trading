@@ -7,7 +7,8 @@ cc_library(
     deps = [
         "@googletest//:gtest",
         "@googletest//:gtest_main",
-        "//data_node:data_node"
+        "//data_node:data_node",
+        "//logger:logger"
     ]
 )
 

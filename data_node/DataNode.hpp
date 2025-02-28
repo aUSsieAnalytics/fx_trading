@@ -134,7 +134,9 @@ protected:
 public:
   static void clear_registry() { IDataNode::__registry__.clear(); }
 
-  void set_logger(std::shared_ptr<StructuredLogger> logger) { IDataNode::_base_logger = logger; }
+  static void set_logger(std::shared_ptr<StructuredLogger> logger) {
+    IDataNode::_base_logger = logger;
+  }
 
   class ScopeLock {
   public:
@@ -176,14 +178,11 @@ public:
 };
 
 template <typename ClassName, typename T> class DataNode : public IDataNode {
-  std::vector<T> _data;
-  void _calculate() { _data_store.put_in_store(calculate()); }
-
 public:
   static inline const std::string type_id = typeid(T).name();
   std::shared_ptr<StructuredLogger> logger;
 
-  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...), _data() {
+  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...) {
     logger = IDataNode::_base_logger->bind();
     logger->set_name("DataNode{" + std::string(typeid(DataNode<ClassName, T>).name()) + "}");
   };
@@ -210,12 +209,11 @@ public:
       auto parent_hash = std::static_pointer_cast<IDataNode>(onode)->_parent_hash.lock();
       auto parent =
           std::static_pointer_cast<DataNode<ClassName, T>>(IDataNode::__registry__[*parent_hash]);
+      parent->logger->debug("calculating");
       parent->calculate();
     };
     return output_node;
   }
-
-  static void calculate(std::shared_ptr<DataNode<ClassName, T>> node) { node->calculate(); }
 
   virtual ~DataNode() {
     if (this->_hash != nullptr) {
@@ -230,7 +228,12 @@ public:
   std::vector<T> get_data() {
     auto data = _data_store.retrieve(this);
     if (!data) {
-      this->_parent_hash.lock() ? this->_parent_calc(shared_from_this()) : calculate();
+      if (this->_parent_hash.lock()) {
+        this->_parent_calc(shared_from_this());
+      } else {
+        this->logger->debug("calculating");
+        calculate();
+      }
       data = _data_store.retrieve(this);
     }
     return std::vector<T>(*data);
