@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -82,6 +83,8 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   static inline std::unordered_map<std::string, DataNodeShrPtr> __registry__;
   static inline std::mutex _scope_lock;
   static inline std::string _scope;
+  static inline std::shared_ptr<StructuredLogger> _base_logger = std::make_shared<StructuredLogger>(
+      "DataNode", std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
   std::string _class_scope;
   std::string _class_name;
   std::vector<DataNodeShrPtr> _upstream_nodes;
@@ -133,6 +136,10 @@ public:
   static void clear_registry() { IDataNode::__registry__.clear(); }
   static void set_logger(std::shared_ptr<StructuredLogger> logger) { _base_logger.assign(logger); }
 
+  static void set_logger(std::shared_ptr<StructuredLogger> logger) {
+    IDataNode::_base_logger = logger;
+  }
+
   class ScopeLock {
   public:
     ScopeLock(std::string scope) {
@@ -173,13 +180,14 @@ public:
 };
 
 template <typename ClassName, typename T> class DataNode : public IDataNode {
-  std::vector<T> _data;
-  void _calculate() { _data_store.put_in_store(calculate()); }
-
 public:
   static inline const std::string type_id = typeid(T).name();
+  std::shared_ptr<StructuredLogger> logger;
 
-  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...), _data(){};
+  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...) {
+    logger = IDataNode::_base_logger->bind();
+    logger->set_name("DataNode{" + std::string(typeid(DataNode<ClassName, T>).name()) + "}");
+  };
 
   friend class IDataNode;
 
@@ -203,12 +211,11 @@ public:
       auto parent_hash = std::static_pointer_cast<IDataNode>(onode)->_parent_hash.lock();
       auto parent =
           std::static_pointer_cast<DataNode<ClassName, T>>(IDataNode::__registry__[*parent_hash]);
+      parent->logger->debug("calculating");
       parent->calculate();
     };
     return output_node;
   }
-
-  static void calculate(std::shared_ptr<DataNode<ClassName, T>> node) { node->calculate(); }
 
   virtual ~DataNode() {
     if (this->_hash != nullptr) {
@@ -223,7 +230,12 @@ public:
   std::vector<T> get_data() {
     auto data = _data_store.retrieve(this);
     if (!data) {
-      this->_parent_hash.lock() ? this->_parent_calc(shared_from_this()) : calculate();
+      if (this->_parent_hash.lock()) {
+        this->_parent_calc(shared_from_this());
+      } else {
+        this->logger->debug("calculating");
+        calculate();
+      }
       data = _data_store.retrieve(this);
     }
     return std::vector<T>(*data);

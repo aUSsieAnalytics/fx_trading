@@ -150,7 +150,7 @@
       "name": "gtest simulator (apple)",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/bazel-bin/simulator/simulator_tests",
+      "program": "${workspaceFolder}/bazel-bin/simulator/tests/simulator_tests",
       "preLaunchTask": "Build debug",
       "MIMode": "lldb",
       "args": [],
@@ -164,7 +164,21 @@
       "name": "gtest data_node (apple)",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/bazel-bin/data_node/data_node_tests",
+      "program": "${workspaceFolder}/bazel-bin/data_node//tests/data_node_tests",
+      "preLaunchTask": "Build debug",
+      "MIMode": "lldb",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "sourceFileMap":{
+        // get the path you need here with `bazel info execution_root`
+        "/private/var/tmp/_bazel_peter/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "gtest logging (apple)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/logger/tests/logger_tests",
       "preLaunchTask": "Build debug",
       "MIMode": "lldb",
       "args": [],
