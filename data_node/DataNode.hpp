@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Logger.hpp"
 #include "sha256.hpp"
 #include "uuid.hpp"
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -81,6 +83,8 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   static inline std::unordered_map<std::string, DataNodeShrPtr> __registry__;
   static inline std::mutex _scope_lock;
   static inline std::string _scope;
+  static inline std::shared_ptr<StructuredLogger> _base_logger = std::make_shared<StructuredLogger>(
+      "DataNode", std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
   std::string _class_scope;
   std::string _class_name;
   std::vector<DataNodeShrPtr> _upstream_nodes;
@@ -130,6 +134,8 @@ protected:
 public:
   static void clear_registry() { IDataNode::__registry__.clear(); }
 
+  void set_logger(std::shared_ptr<StructuredLogger> logger) { IDataNode::_base_logger = logger; }
+
   class ScopeLock {
   public:
     ScopeLock(std::string scope) {
@@ -175,8 +181,12 @@ template <typename ClassName, typename T> class DataNode : public IDataNode {
 
 public:
   static inline const std::string type_id = typeid(T).name();
+  std::shared_ptr<StructuredLogger> logger;
 
-  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...), _data(){};
+  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...), _data() {
+    logger = IDataNode::_base_logger->bind();
+    logger->set_name("DataNode{" + std::string(typeid(DataNode<ClassName, T>).name()) + "}");
+  };
 
   friend class IDataNode;
 
