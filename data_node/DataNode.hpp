@@ -117,7 +117,6 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   std::function<void(std::shared_ptr<void> onode)> _parent_calc;
   std::shared_ptr<std::string> _hash;
   std::string _hash_string;
-  std::shared_ptr<StructuredLogger> _base_logger;
 
   template <typename ClassName, typename T> friend class DataNode;
 
@@ -157,7 +156,6 @@ protected:
 
 public:
   static void clear_registry() { IDataNode::__registry__.clear(); }
-  static void set_logger(std::shared_ptr<StructuredLogger> logger) { _base_logger.assign(logger); }
 
   static void set_logger(std::shared_ptr<StructuredLogger> logger) {
     IDataNode::_base_logger = logger;
