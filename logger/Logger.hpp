@@ -13,7 +13,7 @@ void add_to_extras(nlohmann::json &extras, K key = "", V val = "", Args... args)
 class StructuredLogger {
   static inline std::string _default_pattern = "[%Y-%m-%d %H:%M:%S:%e][%^%l%$]%v";
   std::shared_ptr<bool> _serialize;
-  std::vector<nlohmann::json> _extras_patch_list;
+  std::vector<std::shared_ptr<nlohmann::json>> _extras_patch_list;
   std::shared_ptr<spdlog::logger> _logger;
   std::string _local_name;
 
@@ -22,7 +22,7 @@ class StructuredLogger {
       nlohmann::json extras;
       extras["message"] = msg;
       for (const auto &extras_patch : this->_extras_patch_list) {
-        for (const auto &[key, val] : extras_patch.items()) {
+        for (const auto &[key, val] : extras_patch->items()) {
           extras[key] = val;
         };
       };
@@ -38,7 +38,8 @@ class StructuredLogger {
 public:
   template <typename T>
   StructuredLogger(const std::string &name, T sinks, nlohmann::json extras = {}) {
-    extras.size() > 0 ? _extras_patch_list = {extras} : _extras_patch_list = {};
+    extras.size() > 0 ? _extras_patch_list = {std::make_shared<nlohmann::json>(extras)}
+                      : _extras_patch_list = {};
     _logger = std::make_shared<spdlog::logger>(name, sinks);
     _logger->set_pattern(StructuredLogger::_default_pattern);
     _serialize = std::make_shared<bool>(false);
@@ -48,7 +49,8 @@ public:
   template <typename T>
   StructuredLogger(const std::string &name, T sinks_start, T sinks_end,
                    nlohmann::json extras = {}) {
-    extras.size() > 0 ? _extras_patch_list = {extras} : _extras_patch_list = {};
+    extras.size() > 0 ? _extras_patch_list = {std::make_shared<nlohmann::json>(extras)}
+                      : _extras_patch_list = {};
     _logger = std::make_shared<spdlog::logger>(name, sinks_start, sinks_end);
     _logger->set_pattern(StructuredLogger::_default_pattern);
     _serialize = std::make_shared<bool>(false);
@@ -74,8 +76,8 @@ public:
 
   template <typename... Args> std::shared_ptr<StructuredLogger> bind(Args... args) {
     auto new_logger = std::make_shared<StructuredLogger>(*this);
-    nlohmann::json new_extras;
-    add_to_extras(new_extras, args...);
+    std::shared_ptr<nlohmann::json> new_extras = std::make_shared<nlohmann::json>();
+    add_to_extras(*new_extras, args...);
     new_logger->_extras_patch_list.push_back(new_extras);
     return new_logger;
   }
