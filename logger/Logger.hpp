@@ -72,7 +72,7 @@ public:
 
   void serialize(bool on = true) {
     *_serialize = on;
-    on ? this->_logger->set_pattern("{\"timestamp\":\"%Y-%m-%d %H:%M:%S\",\"level\":\"%l\",%v")
+    on ? this->_logger->set_pattern("{\"timestamp\":\"%Y-%m-%d %H:%M:%S:%e\",\"level\":\"%l\",%v")
        : this->_logger->set_pattern(StructuredLogger::_default_pattern);
   }
 

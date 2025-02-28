@@ -3,16 +3,39 @@
 #include "Logger.hpp"
 #include "sha256.hpp"
 #include "uuid.hpp"
+#include <array>
+#include <cstdio>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <regex>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <sstream>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
-namespace DataNodes {
+template <typename T> std::string exec(const T *cmd) {
+  std::array<char, 256> buffer;
+  std::string result;
+  std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+  // if (!pipe) {
+  //   throw std::runtime_error("popen() failed!");
+  // }
+  while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
+    result += buffer.data();
+  }
+  return result;
+}
 
+template <typename T = std::string> std::string remove_data_node_namespace_str(std::string str) {
+  std::regex pattern("DataNodes::");
+  std::string result = std::regex_replace(str, pattern, "");
+  result.pop_back();
+  return result;
+}
+
+namespace DataNodes {
 template <typename T> std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector) {
   std::ostringstream oss;
   for (auto &entry : vector) {
@@ -179,12 +202,13 @@ public:
 
 template <typename ClassName, typename T> class DataNode : public IDataNode {
 public:
-  static inline const std::string type_id = typeid(T).name();
+  static inline const std::string type_id = remove_data_node_namespace_str(
+      exec(("c++filt -t " + std::string(typeid(DataNode<ClassName, T>).name())).data()));
   std::shared_ptr<StructuredLogger> logger;
 
   template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...) {
     logger = IDataNode::_base_logger->bind();
-    logger->set_name("DataNode{" + std::string(typeid(DataNode<ClassName, T>).name()) + "}");
+    logger->set_name(DataNode<ClassName, T>::type_id);
   };
 
   friend class IDataNode;
@@ -193,8 +217,7 @@ public:
     std::string hash_string;
     std::string identifier = uuid::generate_uuid_v4();
     _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
-    hash_string +=
-        "(" + std::string(typeid(DataNode<IDataNode, A>).name()) + "){" + type_id + "}" + ": ";
+    hash_string += "(" + DataNode<ClassName, T>::type_id + ")" + ": ";
     hash_string = create_hash_string(hash_string, identifier);
     auto hash_val = sha256(hash_string);
     auto output_node = std::make_shared<DataNode<IDataNode, A>>(DataNode<IDataNode, A>());
@@ -248,7 +271,7 @@ public:
   template <class... Args> static std::shared_ptr<ClassName> create(Args... args) {
     std::string hash_string;
     _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
-    hash_string += "(" + std::string(typeid(ClassName).name()) + "){" + type_id + "}" + ": ";
+    hash_string += "(" + DataNode<ClassName, T>::type_id + ")" + ": ";
     hash_string = create_hash_string(hash_string, args...);
     auto hash_val = sha256(hash_string);
     if (IDataNode::__registry__.find(hash_val) != IDataNode::__registry__.end()) {
