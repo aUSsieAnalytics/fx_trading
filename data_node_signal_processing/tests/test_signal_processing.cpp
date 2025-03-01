@@ -56,6 +56,7 @@ TEST_F(DataNodeTest, TestCandleStickSMA) {
   }
 
   auto example_one = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create();
+  example_one->logger->serialize();
   example_one->set_data(candlesticks);
   auto sma = DataNode<SimpleMovingAverage<CandleStick, CandleStick>>::create(example_one, 3);
   auto result = sma->get_data();

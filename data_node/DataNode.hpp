@@ -155,6 +155,8 @@ protected:
   static inline DataStore _data_store;
 
 public:
+  std::shared_ptr<StructuredLogger> logger;
+
   static void clear_registry() { IDataNode::__registry__.clear(); }
 
   static void set_logger(std::shared_ptr<StructuredLogger> logger) {
@@ -176,7 +178,9 @@ public:
 
   template <class... Args>
   IDataNode(Args... args)
-      : _upstream_nodes(), _downstream_node_hashes(), _hash(new std::string("")) {}
+      : _upstream_nodes(), _downstream_node_hashes(), _hash(new std::string("")) {
+    logger = IDataNode::_base_logger;
+  }
 
   std::vector<DataNodeShrPtr> get_upstream_nodes() { return _upstream_nodes; }
 
@@ -204,7 +208,6 @@ template <typename ClassName, typename T> class DataNode : public IDataNode {
 public:
   static inline const std::string type_id = remove_data_node_namespace_str(
       exec(("c++filt -t " + std::string(typeid(DataNode<ClassName, T>).name())).data()));
-  std::shared_ptr<StructuredLogger> logger;
 
   template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...) {
     logger = IDataNode::_base_logger->bind();
@@ -222,6 +225,7 @@ public:
     auto hash_val = sha256(hash_string);
     auto output_node = std::make_shared<DataNode<IDataNode, A>>(DataNode<IDataNode, A>());
     output_node->_hash->assign(hash_val);
+    output_node->logger = output_node->logger->bind("hash", hash_val, "hash_string", hash_string);
     output_node->_hash_string = hash_string;
     output_node->_class_scope = _scope;
 
@@ -278,6 +282,7 @@ public:
       return std::static_pointer_cast<ClassName>(IDataNode::__registry__[hash_val]);
     }
     auto new_node = std::make_shared<ClassName>(ClassName(args...));
+    new_node->logger = new_node->logger->bind("hash", hash_val, "hash_string", hash_string);
     new_node->_hash->assign(hash_val);
     new_node->_hash_string = hash_string;
     new_node->_class_scope = _scope;
