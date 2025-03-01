@@ -10,8 +10,8 @@ class ExampleNode : public DataNode<ExampleNode, double> {
   int _int_vector;
 
 public:
-  std::shared_ptr<DataNode<IDataNode, double>> output_1;
-  std::shared_ptr<DataNode<IDataNode, int>> output_2;
+  std::shared_ptr<OutputNode<double>> output_1;
+  std::shared_ptr<OutputNode<int>> output_2;
 
   ExampleNode(double value1 = 0, int value2 = 0)
       : DataNode(value2), _value1(value1), _int_vector(value2) {

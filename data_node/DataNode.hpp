@@ -60,6 +60,7 @@ std::string create_hash_string(std::string hash_string = "", T t = "", Args... a
 
 class IDataNode;
 template <typename ClassName = IDataNode, typename T = double> class DataNode;
+template <typename T> class OutputNode;
 
 typedef std::shared_ptr<IDataNode> DataNodeShrPtr;
 typedef std::weak_ptr<IDataNode> DataNodeWeakPtr;
@@ -216,14 +217,14 @@ public:
 
   friend class IDataNode;
 
-  template <typename A> std::shared_ptr<DataNode<IDataNode, A>> register_output_node() {
+  template <typename A> std::shared_ptr<OutputNode<A>> register_output_node() {
     std::string hash_string;
     std::string identifier = uuid::generate_uuid_v4();
     _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
     hash_string += "(" + DataNode<ClassName, T>::type_id + ")" + ": ";
     hash_string = create_hash_string(hash_string, identifier);
     auto hash_val = sha256(hash_string);
-    auto output_node = std::make_shared<DataNode<IDataNode, A>>(DataNode<IDataNode, A>());
+    auto output_node = std::make_shared<OutputNode<A>>(OutputNode<A>());
     output_node->_hash->assign(hash_val);
     output_node->logger = output_node->logger->bind("hash", hash_val, "hash_string", hash_string);
     output_node->_hash_string = hash_string;
@@ -290,5 +291,7 @@ public:
     return new_node;
   }
 };
+
+template <typename T> class OutputNode : public DataNode<IDataNode, T> {};
 
 } // namespace DataNodes
