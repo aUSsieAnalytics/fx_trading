@@ -8,13 +8,13 @@
 using namespace std;
 using namespace DataNodes;
 
-class ExampleNode : public DataNode<ExampleNode, double> {
+class ExampleNode : public DataNode<ExampleNode, void> {
   std::vector<double> _double_vector;
   std::vector<int> _int_vector;
 
 public:
-  std::shared_ptr<DataNode<IDataNode, double>> output_1;
-  std::shared_ptr<DataNode<IDataNode, int>> output_2;
+  std::shared_ptr<OutputNode<double>> output_1;
+  std::shared_ptr<OutputNode<int>> output_2;
 
   ExampleNode(std::vector<double> double_vector, std::vector<int> int_vector)
       : DataNode(double_vector, int_vector), _double_vector(double_vector),
@@ -24,7 +24,6 @@ public:
   }
 
   void calculate() override {
-    set_data(_double_vector);
     output_1->set_data(_double_vector);
     output_2->set_data(_int_vector);
   };

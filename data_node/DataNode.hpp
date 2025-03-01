@@ -292,6 +292,9 @@ public:
   }
 };
 
-template <typename T> class OutputNode : public DataNode<IDataNode, T> {};
+template <typename T> class OutputNode : public DataNode<IDataNode, T> {
+public:
+  template <class... Args> OutputNode(Args... args) : DataNode<IDataNode, T>(args...) {}
+};
 
 } // namespace DataNodes

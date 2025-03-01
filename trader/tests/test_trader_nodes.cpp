@@ -9,13 +9,13 @@
 using namespace std;
 using namespace DataNodes;
 
-class ExampleNode : public DataNode<ExampleNode, double> {
+class ExampleNode : public DataNode<ExampleNode, void> {
   std::vector<double> _double_vector;
   std::vector<int> _int_vector;
 
 public:
-  std::shared_ptr<DataNode<IDataNode, double>> output_1;
-  std::shared_ptr<DataNode<IDataNode, int>> output_2;
+  std::shared_ptr<OutputNode<double>> output_1;
+  std::shared_ptr<OutputNode<int>> output_2;
 
   ExampleNode(std::vector<double> double_vector, std::vector<int> int_vector)
       : DataNode(double_vector, int_vector), _double_vector(double_vector),
@@ -25,7 +25,6 @@ public:
   }
 
   void calculate() override {
-    set_data(_double_vector);
     output_1->set_data(_double_vector);
     output_2->set_data(_int_vector);
   };
@@ -37,7 +36,7 @@ TEST_F(DataNodeTest, TestCandleStickSplitter) {
     candlesticks.emplace_back(CandleStick(i, i + 1, i + 2, i + 3));
   }
 
-  auto candle_stick_node = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create();
+  auto candle_stick_node = DataNode<OutputNode<CandleStick>>::create();
   candle_stick_node->set_data(candlesticks);
 
   auto high_prices =
@@ -116,9 +115,9 @@ TEST_F(DataNodeTest, TestCrossOvers) {
   candlesticks1.at(2).close = 4;
   candlesticks2.at(2).close = 3;
 
-  auto candle_stick_node1 = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create("1");
+  auto candle_stick_node1 = DataNode<OutputNode<CandleStick>, CandleStick>::create("1");
   candle_stick_node1->set_data(candlesticks1);
-  auto candle_stick_node2 = DataNode<DataNode<IDataNode, CandleStick>, CandleStick>::create("2");
+  auto candle_stick_node2 = DataNode<OutputNode<CandleStick>, CandleStick>::create("2");
   candle_stick_node2->set_data(candlesticks2);
 
   auto candle_stick_crossover =

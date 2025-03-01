@@ -3,7 +3,7 @@
 
 namespace DataNodes {
 
-class ForexInstrument : public DataNode<ForexInstrument, CandleStick> {
+class ForexInstrument : public DataNode<ForexInstrument, void> {
   ForexPair _pair;
 
 public:
