@@ -28,6 +28,8 @@ template <typename T> std::string exec(const T *cmd) {
   return result;
 }
 
+namespace DataNodes {
+
 template <typename T = std::string> std::string remove_data_node_namespace_str(std::string str) {
   std::regex pattern("DataNodes::");
   std::string result = std::regex_replace(str, pattern, "");
@@ -35,7 +37,6 @@ template <typename T = std::string> std::string remove_data_node_namespace_str(s
   return result;
 }
 
-namespace DataNodes {
 template <typename T> std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector) {
   std::ostringstream oss;
   for (auto &entry : vector) {
