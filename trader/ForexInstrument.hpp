@@ -5,6 +5,7 @@ namespace DataNodes {
 
 class ForexInstrument : public DataNode<ForexInstrument, void> {
   ForexPair _pair;
+  Granularity _granularity;
 
 public:
   std::shared_ptr<OutputNode<CandleStick>> candle_sticks_bid;
@@ -12,7 +13,8 @@ public:
   std::shared_ptr<OutputNode<CandleStick>> candle_sticks_ask;
   std::shared_ptr<OutputNode<unsigned long>> utc_time_ms;
 
-  ForexInstrument(ForexPair pair) : DataNode(pair), _pair(pair) {
+  ForexInstrument(ForexPair pair, Granularity granularity)
+      : DataNode(pair, granularity), _pair(pair), _granularity(granularity) {
     candle_sticks_bid = register_output_node<CandleStick>("bid");
     candle_sticks_mid = register_output_node<CandleStick>("mid");
     candle_sticks_ask = register_output_node<CandleStick>("ask");
