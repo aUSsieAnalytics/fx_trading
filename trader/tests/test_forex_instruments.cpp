@@ -15,5 +15,5 @@ TEST_F(DataNodeTest, TestForexInstrument) {
   }
 
   auto eur_usd = DataNode<ForexInstrument>::create(ForexPair::EURUSD);
-  eur_usd->candle_sticks->set_data(candlesticks);
+  eur_usd->candle_sticks_bid->set_data(candlesticks);
 }

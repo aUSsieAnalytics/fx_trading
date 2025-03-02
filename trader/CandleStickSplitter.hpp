@@ -10,8 +10,7 @@ class CandleStickSplitter : public DataNode<CandleStickSplitter, double> {
   std::shared_ptr<OutputNode<CandleStick>> _node;
 
 public:
-  CandleStickSplitter(std::shared_ptr<OutputNode<CandleStick>> node,
-                      CandleStickPrice const price)
+  CandleStickSplitter(std::shared_ptr<OutputNode<CandleStick>> node, CandleStickPrice const price)
       : DataNode<CandleStickSplitter, double>(node, price), _price(price) {
     _node = this->add_upstream_node(node);
   }

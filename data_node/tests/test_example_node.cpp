@@ -5,7 +5,7 @@
 using namespace std;
 using namespace DataNodes;
 
-class ExampleNode : public DataNode<ExampleNode, double> {
+class ExampleNode : public DataNode<ExampleNode> {
   double _value1;
   int _int_vector;
 
@@ -21,7 +21,6 @@ public:
 
   void calculate() override {
     auto x = std::vector<double>({_value1, static_cast<double>(_int_vector)});
-    set_data(x);
     output_1->set_data(x);
     auto y = std::vector<int>({-1, _int_vector});
     output_2->set_data(y);
@@ -63,7 +62,6 @@ TEST_F(DataNodeTest, CallParentDataFirst) {
   auto example_one = DataNode<ExampleNode>::create(0, 1);
   auto example_two = DataNode<ExampleNode2>::create(value);
   example_one->output_1->calculate();
-  ASSERT_EQ(example_one->get_data().size(), 2);
   ASSERT_EQ(example_one->output_1->get_data().size(), 2);
   ASSERT_EQ(example_two->get_data().size(), 3);
   ASSERT_EQ(example_two->get_data().at(example_two->get_data().size() - 1), value);

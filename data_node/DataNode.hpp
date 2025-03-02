@@ -60,7 +60,7 @@ std::string create_hash_string(std::string hash_string = "", T t = "", Args... a
 }
 
 class IDataNode;
-template <typename ClassName = IDataNode, typename T = double> class DataNode;
+template <typename ClassName = IDataNode, typename T = void> class DataNode;
 template <typename T> class OutputNode;
 
 typedef std::shared_ptr<IDataNode> DataNodeShrPtr;
@@ -218,12 +218,13 @@ public:
 
   friend class IDataNode;
 
-  template <typename A> std::shared_ptr<OutputNode<A>> register_output_node() {
+  template <typename A, class... Args>
+  std::shared_ptr<OutputNode<A>> register_output_node(Args... args) {
     std::string hash_string;
     std::string identifier = uuid::generate_uuid_v4();
     _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
     hash_string += "(" + DataNode<ClassName, T>::type_id + ")" + ": ";
-    hash_string = create_hash_string(hash_string, identifier);
+    hash_string = create_hash_string(hash_string, identifier, args...);
     auto hash_val = sha256(hash_string);
     auto output_node = std::make_shared<OutputNode<A>>(OutputNode<A>());
     output_node->_hash->assign(hash_val);
