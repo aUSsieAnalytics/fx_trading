@@ -4,6 +4,7 @@
 #include <iostream>
 
 enum CandleStickPrice { OPEN, CLOSE, HIGH, LOW };
+enum OrderDirection { BUY, SELL };
 
 struct CandleStick {
   double open;
@@ -285,4 +286,49 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const ForexPair &
 
 namespace std {
 constexpr const std::string_view to_string(const ForexPair &pair) { return forex_lookup(pair); }
+} // namespace std
+
+enum Currency {
+  AUD,
+  CAD,
+  CHF,
+  CNH,
+  CZK,
+  DKK,
+  EUR,
+  GBP,
+  HKD,
+  HUF,
+  JPY,
+  MXN,
+  NOK,
+  NZD,
+  PLN,
+  SEK,
+  SGD,
+  THB,
+  TRY,
+  USD,
+  ZAR
+};
+
+constexpr std::array<std::pair<Currency, const char *>, 21> currency_to_string = {
+    {{AUD, "AUD"}, {CAD, "CAD"}, {CHF, "CHF"}, {CNH, "CNH"}, {CZK, "CZK"}, {DKK, "DKK"},
+     {EUR, "EUR"}, {GBP, "GBP"}, {HKD, "HKD"}, {HUF, "HUF"}, {JPY, "JPY"}, {MXN, "MXN"},
+     {NOK, "NOK"}, {NZD, "NZD"}, {PLN, "PLN"}, {SEK, "SEK"}, {SGD, "SGD"}, {THB, "THB"},
+     {TRY, "TRY"}, {USD, "USD"}, {ZAR, "ZAR"}}};
+
+constexpr const std::string_view currency_lookup(Currency currency) {
+  return currency_to_string[currency].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const Currency &currency) {
+  return stream << currency_lookup(currency);
+}
+
+namespace std {
+constexpr const std::string_view to_string(const Currency &currency) {
+  return currency_lookup(currency);
+}
+
 } // namespace std

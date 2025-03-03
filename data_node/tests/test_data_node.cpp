@@ -13,20 +13,20 @@ TEST_F(DataNodeTest, Initialization) {
   }
   string hash = source->get_hash();
   ASSERT_EQ(hash, DataNode<>::create()->get_hash());
-  string blah = "(DataNode<IDataNode, double>): ";
+  string blah = "(DataNode<IDataNode, void>): ";
   ASSERT_EQ(hash, sha256(blah));
   ASSERT_NE(hash, hi_node->get_hash());
-  ASSERT_EQ(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, double>): hi"));
+  ASSERT_EQ(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, void>): hi"));
   {
     // test scoping
     auto x = IDataNode::ScopeLock("local");
-    ASSERT_NE(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, double>): hi"));
+    ASSERT_NE(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, void>): hi"));
     ASSERT_EQ(DataNode<>::create("hi")->get_hash(),
-              sha256("local: (DataNode<IDataNode, double>): hi"));
+              sha256("local: (DataNode<IDataNode, void>): hi"));
     ASSERT_EQ(DataNode<>::create("hi")->get_scope(), "local");
   }
   // check that scope was cleared
-  ASSERT_EQ(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, double>): hi"));
+  ASSERT_EQ(DataNode<>::create("hi")->get_hash(), sha256("(DataNode<IDataNode, void>): hi"));
 }
 
 TEST_F(DataNodeTest, AddSource) {

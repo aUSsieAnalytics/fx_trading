@@ -18,7 +18,7 @@ public:
     candle_sticks_bid = register_output_node<CandleStick>("bid");
     candle_sticks_mid = register_output_node<CandleStick>("mid");
     candle_sticks_ask = register_output_node<CandleStick>("ask");
-    utc_time_ms = register_output_node<unsigned long>("utc_time_ms");
+    utc_time_ms = register_output_node<unsigned long>("time_ms");
   }
 };
 
