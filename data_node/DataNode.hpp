@@ -123,6 +123,7 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   std::string _hash_string;
 
   template <typename ClassName, typename T> friend class DataNode;
+  template <typename T> friend class OutputNode;
 
   friend std::ostream &operator<<(std::ostream &stream, IDataNode &node) {
     return stream << node._hash_string;
@@ -306,6 +307,9 @@ public:
 template <typename T> class OutputNode : public DataNode<IDataNode, T> {
 public:
   template <class... Args> OutputNode(Args... args) : DataNode<IDataNode, T>(args...) {}
+  friend std::ostream &operator<<(std::ostream &stream, std::shared_ptr<OutputNode<T>> &node) {
+    return stream << node->_hash_string;
+  }
 };
 
 } // namespace DataNodes
