@@ -86,4 +86,5 @@ public:
   void info(std::string msg) { return this->_logger->info(this->adjust_message(msg)); }
   void debug(std::string msg) { return this->_logger->debug(this->adjust_message(msg)); }
   void error(std::string msg) { return this->_logger->error(this->adjust_message(msg)); }
+  void warn(std::string msg) { return this->_logger->warn(this->adjust_message(msg)); }
 };
