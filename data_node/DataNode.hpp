@@ -31,7 +31,9 @@ template <typename T> std::string exec(const T *cmd) {
 namespace DataNodes {
 
 template <typename T = std::string> std::string remove_data_node_namespace_str(std::string str) {
-  std::regex pattern("DataNodes::");
+  std::regex pattern("std::__1::vector");
+  str = std::regex_replace(str, pattern, "vector");
+  pattern = std::regex("(, std::__1::allocator<[^>]+>)|(DataNodes::)");
   std::string result = std::regex_replace(str, pattern, "");
   result.pop_back();
   return result;
