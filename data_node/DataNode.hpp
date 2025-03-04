@@ -91,14 +91,14 @@ private:
   template <typename ClassName, typename T> friend class DataNode;
 
   template <typename ClassName, typename T>
-  void put_in_store(DataNode<ClassName, T> *node, std::shared_ptr<std::vector<T>> data) {
+  void put_in_store(DataNode<ClassName, T> *node, std::shared_ptr<T> data) {
     _store[node->get_hash()] = data;
   }
 
   template <typename ClassName, typename T>
-  std::shared_ptr<std::vector<T>> retrieve(DataNode<ClassName, T> *node) {
+  std::shared_ptr<T> retrieve(DataNode<ClassName, T> *node) {
     if (_store.find(node->get_hash()) != _store.end()) {
-      return std::static_pointer_cast<std::vector<T>>(_store[node->get_hash()]);
+      return std::static_pointer_cast<T>(_store[node->get_hash()]);
     }
     return nullptr;
   };
@@ -211,7 +211,7 @@ public:
   static inline const std::string type_id = remove_data_node_namespace_str(
       exec(("c++filt -t " + std::string(typeid(DataNode<ClassName, T>).name())).data()));
 
-  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...) {
+  template <class... Args> DataNode(Args... args) : IDataNode(args...) {
     logger = IDataNode::_base_logger->bind();
     logger->set_name(DataNode<ClassName, T>::type_id);
   };
@@ -251,11 +251,18 @@ public:
     }
   };
 
-  void set_data(std::vector<T> &data) {
-    _data_store.put_in_store(this, std::make_shared<std::vector<T>>(data));
+  // Explicitly delete for T = void
+  void set_data(...) = delete;
+
+  // Enable only when T is NOT void
+  template <typename U = T>
+  void set_data(const U &data)
+    requires(!std::is_void_v<U>)
+  {
+    _data_store.put_in_store(this, std::make_shared<U>(data));
   }
 
-  std::vector<T> get_data() {
+  T get_data() {
     auto data = _data_store.retrieve(this);
     if (!data) {
       if (this->_parent_hash.lock()) {
@@ -266,7 +273,7 @@ public:
       }
       data = _data_store.retrieve(this);
     }
-    return std::vector<T>(*data);
+    return *data;
   }
 
   virtual void calculate() {

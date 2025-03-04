@@ -8,5 +8,4 @@ coverage:macos --repo_env=BAZEL_LLVM_COV=/Library/Developer/CommandLineTools/usr
 coverage:macos --repo_env=BAZEL_LLVM_PROFDATA=/Library/Developer/CommandLineTools/usr/bin/llvm-profdata
 coverage:macos --test_env=GENERATE_LLVM_LCOV=1
 coverage --nocache_test_results
-
-build --copt=--std=c++17
+build --cxxopt=-std=c++20

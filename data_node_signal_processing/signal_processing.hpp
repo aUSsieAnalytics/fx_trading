@@ -11,14 +11,15 @@ type `OutputType` (default `double`).
 */
 template <typename InputType, typename OutputType = double>
 class SimpleMovingAverage
-    : public DataNode<SimpleMovingAverage<InputType, OutputType>, OutputType> {
-  std::shared_ptr<DataNode<IDataNode, InputType>> _input_data;
+    : public DataNode<SimpleMovingAverage<InputType, OutputType>, std::vector<OutputType>> {
+  std::shared_ptr<OutputNode<std::vector<InputType>>> _input_data;
   unsigned int _window_size;
 
 public:
-  SimpleMovingAverage(std::shared_ptr<DataNode<IDataNode, InputType>> node,
+  SimpleMovingAverage(std::shared_ptr<OutputNode<std::vector<InputType>>> node,
                       unsigned int window_size)
-      : DataNode<SimpleMovingAverage<InputType, OutputType>, OutputType>(node, window_size),
+      : DataNode<SimpleMovingAverage<InputType, OutputType>, std::vector<OutputType>>(node,
+                                                                                      window_size),
         _window_size(window_size) {
     _input_data = this->add_upstream_node(node);
   }
@@ -49,13 +50,14 @@ vector of type `OutputType` (default `double`).
 */
 template <typename InputType, typename OutputType = double>
 class ExponentialMovingAverage
-    : public DataNode<ExponentialMovingAverage<InputType, OutputType>, OutputType> {
-  std::shared_ptr<DataNode<IDataNode, InputType>> _input_data;
+    : public DataNode<ExponentialMovingAverage<InputType, OutputType>, std::vector<OutputType>> {
+  std::shared_ptr<OutputNode<std::vector<InputType>>> _input_data;
   double _factor;
 
 public:
-  ExponentialMovingAverage(std::shared_ptr<DataNode<IDataNode, InputType>> node, double factor)
-      : DataNode<ExponentialMovingAverage<InputType, OutputType>, OutputType>(node, factor),
+  ExponentialMovingAverage(std::shared_ptr<OutputNode<std::vector<InputType>>> node, double factor)
+      : DataNode<ExponentialMovingAverage<InputType, OutputType>, std::vector<OutputType>>(node,
+                                                                                           factor),
         _factor(factor) {
     _input_data = this->add_upstream_node(node);
   }

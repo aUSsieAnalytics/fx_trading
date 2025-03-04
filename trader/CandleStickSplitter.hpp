@@ -5,13 +5,14 @@
 
 namespace DataNodes {
 
-class CandleStickSplitter : public DataNode<CandleStickSplitter, double> {
+class CandleStickSplitter : public DataNode<CandleStickSplitter, std::vector<double>> {
   CandleStickPrice _price;
-  std::shared_ptr<OutputNode<CandleStick>> _node;
+  std::shared_ptr<OutputNode<std::vector<CandleStick>>> _node;
 
 public:
-  CandleStickSplitter(std::shared_ptr<OutputNode<CandleStick>> node, CandleStickPrice const price)
-      : DataNode<CandleStickSplitter, double>(node, price), _price(price) {
+  CandleStickSplitter(std::shared_ptr<OutputNode<std::vector<CandleStick>>> node,
+                      CandleStickPrice const price)
+      : DataNode<CandleStickSplitter, std::vector<double>>(node, price), _price(price) {
     _node = this->add_upstream_node(node);
   }
 
