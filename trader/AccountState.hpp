@@ -1,6 +1,5 @@
 #include "DataNode.hpp"
-#include "trading_types.hpp"
-
+#include "orders.hpp"
 
 namespace DataNodes {
 
@@ -11,9 +10,7 @@ class AccountStateNode : public DataNode<AccountStateNode, AccountState> {
   std::string _password;
 
 public:
-  AccountStateNode(Broker broker): DataNode(broker), _broker(broker) {
-    
-  }
+  AccountStateNode(Broker broker) : DataNode(broker), _broker(broker) {}
 };
 
 } // namespace DataNodes
