@@ -1,3 +1,21 @@
+bazel_dep(name = "curl", version = "8.8.0.bcr.3")
 bazel_dep(name = "googletest", version = "1.15.2")
 bazel_dep(name = "spdlog", version = "1.15.1")
 bazel_dep(name = "nlohmann_json", version = "3.11.3.bcr.1")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(name = "cpr",
+    url = "https://github.com/libcpr/cpr/archive/refs/tags/1.11.2.tar.gz",
+    strip_prefix = "cpr-1.11.2",
+    sha256 = "3795a3581109a9ba5e48fbb50f9efe3399a3ede22f2ab606b71059a615cd6084",
+    build_file_content = """
+cc_library(
+    name = "cpr",
+    srcs = glob(["cpr/*.cpp"]),
+    hdrs = glob(["include/cpr/*.h"]),
+    includes = ["include"],
+    deps = ["@curl//:curl"],
+    visibility = ["//visibility:public"],
+)"""
+)
