@@ -27,7 +27,7 @@
       ],
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/home/vscode/.cache/bazel/_bazel_vscode/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/home/vscode/.cache/bazel/_bazel_vscode/273517cedf802bda051df08c77b29fc6/execroot/_main": "${workspaceFolder}"
       }
     },
     {
@@ -56,7 +56,7 @@
       ],
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/home/vscode/.cache/bazel/_bazel_vscode/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/home/vscode/.cache/bazel/_bazel_vscode/273517cedf802bda051df08c77b29fc6/execroot/_main": "${workspaceFolder}"
       }
     },
     {
@@ -85,7 +85,7 @@
       ],
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/home/vscode/.cache/bazel/_bazel_vscode/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/home/vscode/.cache/bazel/_bazel_vscode/273517cedf802bda051df08c77b29fc6/execroot/_main": "${workspaceFolder}"
       }
     },
     {
@@ -114,7 +114,7 @@
       ],
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/home/vscode/.cache/bazel/_bazel_vscode/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/home/vscode/.cache/bazel/_bazel_vscode/273517cedf802bda051df08c77b29fc6/execroot/_main": "${workspaceFolder}"
       }
     },
     {
@@ -143,7 +143,7 @@
       ],
       "sourceFileMap":{
         // get the path you need here with `bazel info execution_root`
-        "/home/vscode/.cache/bazel/_bazel_vscode/e971267c77f2741dfda2d1a48531dcf8/execroot/_main": "${workspaceFolder}"
+        "/home/vscode/.cache/bazel/_bazel_vscode/273517cedf802bda051df08c77b29fc6/execroot/_main": "${workspaceFolder}"
       }
     },
     {

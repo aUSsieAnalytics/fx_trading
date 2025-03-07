@@ -4,6 +4,7 @@
 #include <iostream>
 
 enum CandleStickPrice { OPEN, CLOSE, HIGH, LOW };
+enum OrderDirection { BUY, SELL };
 
 struct CandleStick {
   double open;
@@ -143,6 +144,49 @@ struct Price {
   CandleStick ask;
 };
 
+enum Granularity {
+  S5,
+  S10,
+  S15,
+  S30,
+  M1,
+  M2,
+  M4,
+  M5,
+  M10,
+  M15,
+  M30,
+  H1,
+  H2,
+  H3,
+  H4,
+  H6,
+  H8,
+  H12,
+  D,
+  W,
+  M
+};
+
+constexpr std::array<std::pair<Granularity, const char *>, 21> granularity_to_string_mapping = {
+    {{S5, "S5"}, {S10, "S10"}, {S15, "S15"}, {S30, "S30"}, {M1, "M1"}, {M2, "M2"}, {M4, "M4"},
+     {M5, "M5"}, {M10, "M10"}, {M15, "M15"}, {M30, "M30"}, {H1, "H1"}, {H2, "H2"}, {H3, "H3"},
+     {H4, "H4"}, {H6, "H6"},   {H8, "H8"},   {H12, "H12"}, {D, "D"},   {W, "W"},   {M, "M"}}};
+
+constexpr const std::string_view granularity_to_string(Granularity granularity) {
+  return granularity_to_string_mapping[granularity].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const Granularity granularity) {
+  return stream << granularity_to_string(granularity);
+}
+
+namespace std {
+constexpr const std::string_view to_string(const Granularity &granularity) {
+  return granularity_to_string(granularity);
+}
+} // namespace std
+
 enum ForexPair {
   AUDCAD,
   AUDCHF,
@@ -242,4 +286,49 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const ForexPair &
 
 namespace std {
 constexpr const std::string_view to_string(const ForexPair &pair) { return forex_lookup(pair); }
+} // namespace std
+
+enum Currency {
+  AUD,
+  CAD,
+  CHF,
+  CNH,
+  CZK,
+  DKK,
+  EUR,
+  GBP,
+  HKD,
+  HUF,
+  JPY,
+  MXN,
+  NOK,
+  NZD,
+  PLN,
+  SEK,
+  SGD,
+  THB,
+  TRY,
+  USD,
+  ZAR
+};
+
+constexpr std::array<std::pair<Currency, const char *>, 21> currency_to_string = {
+    {{AUD, "AUD"}, {CAD, "CAD"}, {CHF, "CHF"}, {CNH, "CNH"}, {CZK, "CZK"}, {DKK, "DKK"},
+     {EUR, "EUR"}, {GBP, "GBP"}, {HKD, "HKD"}, {HUF, "HUF"}, {JPY, "JPY"}, {MXN, "MXN"},
+     {NOK, "NOK"}, {NZD, "NZD"}, {PLN, "PLN"}, {SEK, "SEK"}, {SGD, "SGD"}, {THB, "THB"},
+     {TRY, "TRY"}, {USD, "USD"}, {ZAR, "ZAR"}}};
+
+constexpr const std::string_view currency_lookup(Currency currency) {
+  return currency_to_string[currency].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const Currency &currency) {
+  return stream << currency_lookup(currency);
+}
+
+namespace std {
+constexpr const std::string_view to_string(const Currency &currency) {
+  return currency_lookup(currency);
+}
+
 } // namespace std

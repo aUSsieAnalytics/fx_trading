@@ -28,14 +28,17 @@ template <typename T> std::string exec(const T *cmd) {
   return result;
 }
 
+namespace DataNodes {
+
 template <typename T = std::string> std::string remove_data_node_namespace_str(std::string str) {
-  std::regex pattern("DataNodes::");
+  std::regex pattern("std::__1::vector");
+  str = std::regex_replace(str, pattern, "vector");
+  pattern = std::regex("(, std::__1::allocator<[^>]+>)|(DataNodes::)");
   std::string result = std::regex_replace(str, pattern, "");
   result.pop_back();
   return result;
 }
 
-namespace DataNodes {
 template <typename T> std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector) {
   std::ostringstream oss;
   for (auto &entry : vector) {
@@ -59,7 +62,7 @@ std::string create_hash_string(std::string hash_string = "", T t = "", Args... a
 }
 
 class IDataNode;
-template <typename ClassName = IDataNode, typename T = double> class DataNode;
+template <typename ClassName = IDataNode, typename T = void> class DataNode;
 template <typename T> class OutputNode;
 
 typedef std::shared_ptr<IDataNode> DataNodeShrPtr;
@@ -90,14 +93,14 @@ private:
   template <typename ClassName, typename T> friend class DataNode;
 
   template <typename ClassName, typename T>
-  void put_in_store(DataNode<ClassName, T> *node, std::shared_ptr<std::vector<T>> data) {
+  void put_in_store(DataNode<ClassName, T> *node, std::shared_ptr<T> data) {
     _store[node->get_hash()] = data;
   }
 
   template <typename ClassName, typename T>
-  std::shared_ptr<std::vector<T>> retrieve(DataNode<ClassName, T> *node) {
+  std::shared_ptr<T> retrieve(DataNode<ClassName, T> *node) {
     if (_store.find(node->get_hash()) != _store.end()) {
-      return std::static_pointer_cast<std::vector<T>>(_store[node->get_hash()]);
+      return std::static_pointer_cast<T>(_store[node->get_hash()]);
     }
     return nullptr;
   };
@@ -120,6 +123,7 @@ class IDataNode : public std::enable_shared_from_this<IDataNode> {
   std::string _hash_string;
 
   template <typename ClassName, typename T> friend class DataNode;
+  template <typename T> friend class OutputNode;
 
   friend std::ostream &operator<<(std::ostream &stream, IDataNode &node) {
     return stream << node._hash_string;
@@ -210,19 +214,20 @@ public:
   static inline const std::string type_id = remove_data_node_namespace_str(
       exec(("c++filt -t " + std::string(typeid(DataNode<ClassName, T>).name())).data()));
 
-  template <class... Args> DataNode<ClassName, T>(Args... args) : IDataNode(args...) {
+  template <class... Args> DataNode(Args... args) : IDataNode(args...) {
     logger = IDataNode::_base_logger->bind();
     logger->set_name(DataNode<ClassName, T>::type_id);
   };
 
   friend class IDataNode;
 
-  template <typename A> std::shared_ptr<OutputNode<A>> register_output_node() {
+  template <typename A, class... Args>
+  std::shared_ptr<OutputNode<A>> register_output_node(Args... args) {
     std::string hash_string;
     std::string identifier = uuid::generate_uuid_v4();
     _scope == "" ? hash_string = "" : hash_string = _scope + ": ";
     hash_string += "(" + DataNode<ClassName, T>::type_id + ")" + ": ";
-    hash_string = create_hash_string(hash_string, identifier);
+    hash_string = create_hash_string(hash_string, identifier, args...);
     auto hash_val = sha256(hash_string);
     auto output_node = std::make_shared<OutputNode<A>>(OutputNode<A>());
     output_node->_hash->assign(hash_val);
@@ -249,11 +254,18 @@ public:
     }
   };
 
-  void set_data(std::vector<T> &data) {
-    _data_store.put_in_store(this, std::make_shared<std::vector<T>>(data));
+  // Explicitly delete for T = void
+  void set_data(...) = delete;
+
+  // Enable only when T is NOT void
+  template <typename U = T>
+  void set_data(const U &data)
+    requires(!std::is_void_v<U>)
+  {
+    _data_store.put_in_store(this, std::make_shared<U>(data));
   }
 
-  std::vector<T> get_data() {
+  T get_data() {
     auto data = _data_store.retrieve(this);
     if (!data) {
       if (this->_parent_hash.lock()) {
@@ -264,7 +276,7 @@ public:
       }
       data = _data_store.retrieve(this);
     }
-    return std::vector<T>(*data);
+    return *data;
   }
 
   virtual void calculate() {
@@ -292,6 +304,12 @@ public:
   }
 };
 
-template <typename T> class OutputNode : public DataNode<IDataNode, T> {};
+template <typename T> class OutputNode : public DataNode<IDataNode, T> {
+public:
+  template <class... Args> OutputNode(Args... args) : DataNode<IDataNode, T>(args...) {}
+  friend std::ostream &operator<<(std::ostream &stream, std::shared_ptr<OutputNode<T>> &node) {
+    return stream << node->_hash_string;
+  }
+};
 
 } // namespace DataNodes

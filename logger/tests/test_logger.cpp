@@ -17,12 +17,19 @@ TEST(GeneralTest, TestLogger) {
   auto print = [&]() {
     logger->info("hi");
     new_logger->info("ho");
+    new_logger2->info("ho");
     separate_logger->info("hello");
     logger->debug("hi");
     new_logger->debug("ho");
+    new_logger2->debug("ho");
     separate_logger->debug("hello");
+    logger->warn("hi");
+    new_logger->warn("ho");
+    new_logger2->warn("ho");
+    separate_logger->warn("hello");
     logger->error("hi");
     new_logger->error("ho");
+    new_logger2->error("ho");
     separate_logger->error("hello");
   };
 
