@@ -1,51 +1,43 @@
 bazel_dep(name = "rules_cc", version = "0.1.1")
-bazel_dep(name = "curl", version = "8.8.0.bcr.3")
-bazel_dep(name = "googletest", version = "1.15.2")
+bazel_dep(name = "googletest", version = "1.16.0")
 bazel_dep(name = "spdlog", version = "1.15.1")
 bazel_dep(name = "nlohmann_json", version = "3.11.3.bcr.1")
 
-http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+# all below for CPR
+bazel_dep(name = "curl", version = "8.8.0.bcr.3")
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "zlib", version = "1.3.1.bcr.5")
+bazel_dep(name = "boringssl", version = "0.20250212.0")
+bazel_dep(name = "rules_foreign_cc", version = "0.14.0")
 
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
     name = "cpr",
     url = "https://github.com/libcpr/cpr/archive/refs/tags/1.11.2.tar.gz",
     strip_prefix = "cpr-1.11.2",
     sha256 = "3795a3581109a9ba5e48fbb50f9efe3399a3ede22f2ab606b71059a615cd6084",
     build_file_content = """
-genrule(
-    name = "extract_cpr_version",
-    srcs = ["CMakeLists.txt"],
-    outs = ["cpr_version.txt"],
-    cmd = \"\"\"
-    awk '/project\\\\(cpr VERSION/ {for (i=3; i<=NF; i++) printf "%s%s", $$i, (i<NF? ".":"\\\\n")}' $(location CMakeLists.txt) > $@
-    \"\"\"
-)
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 
-genrule(
-    name = "generate_cprver_h",
-    outs = ["include/cpr/cprver.h"],
-    srcs = ["cpr_version.txt", "cmake/cprver.h.in"],
-    cmd = \"\"\"
-    version=$$(cat $(location cpr_version.txt)) && \\
-    major=$$(echo $$version | cut -d. -f1) && \\
-    minor=$$(echo $$version | cut -d. -f2) && \\
-    patch=$$(echo $$version | cut -d. -f3) && \\
-    sed -e "s@cpr_VERSION@$$version@g" \\
-        -e "s@cpr_VERSION_MAJOR@$$major@g" \\
-        -e "s@cpr_VERSION_MINOR@$$minor@g" \\
-        -e "s@cpr_VERSION_PATCH@$$patch@g" \\
-        $(location cmake/cprver.h.in) > $@
-    \"\"\"
-)
-
-cc_library(
-    name = "cpr",
-    srcs = glob(["cpr/**/*.cpp"]),
-    hdrs = glob(["include/cpr/**/*.h"]) + ["generate_cprver_h"],
-    includes = ["include", "."],
-    deps = ["@curl//:curl"],
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"], ["bazel-*/**"]),
     visibility = ["//visibility:public"],
-    data = [":extract_cpr_version", ":generate_cprver_h"],  # Ensures genrule runs before build
+)
+
+cmake(
+    name = "cpr",
+    cache_entries = {
+    },
+    tags = ["requires-network"],
+    includes = ["include/cpr"],
+    lib_source = ":srcs",
+    out_shared_libs = select({
+        "@platforms//os:macos": ["libcpr.dylib"],
+        "@platforms//os:windows": ["libcpr.dll"],
+        "//conditions:default": ["libcpr.so.1"],
+    }),
+    visibility = ["//visibility:public"],
 )
 """
 )
