@@ -3,13 +3,15 @@ cc_library(
     deps = [
         "//data_node:data_node",
         "//data_node_signal_processing:signal_processing",
-        "//types:trading_types"
+        "//types:trading_types",
+        "@cpr"
         ],
     srcs = [],
     hdrs = [
         "CandleStickSplitter.hpp",
         "CrossOver.hpp",
-        "ForexInstrument.hpp"
+        "ForexInstrument.hpp",
+        "AccountState.hpp"
     ],
     visibility = ["//visibility:public"],
     includes = ["."]

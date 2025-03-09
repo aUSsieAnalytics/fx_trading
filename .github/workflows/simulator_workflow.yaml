@@ -24,9 +24,9 @@ jobs:
       run: |
         pip install clang-format
         echo "$(clang-format --version)"
-    - name: Install lcov
+    - name: Install lcov and libcurl
       run: |
-        sudo apt-get update && sudo apt-get install lcov
+        sudo apt-get update && sudo apt-get install lcov libcurl4-openssl-dev
     - name: formatting and linting
       run: |
         make format-check

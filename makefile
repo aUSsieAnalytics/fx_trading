@@ -11,7 +11,7 @@ coverage:
 	bash ./ci/coverage.sh
 
 clean:
-	bazel clean
+	bazel clean --expunge
 
 build:
 	bazel build //...

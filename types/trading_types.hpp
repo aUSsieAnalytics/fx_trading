@@ -5,6 +5,7 @@
 
 enum CandleStickPrice { OPEN, CLOSE, HIGH, LOW };
 enum OrderDirection { BUY, SELL };
+enum Broker { OANDA, FOREXCOM };
 
 struct CandleStick {
   double open;

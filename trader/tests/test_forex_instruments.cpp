@@ -14,6 +14,6 @@ TEST_F(DataNodeTest, TestForexInstrument) {
     candlesticks.emplace_back(CandleStick(i, i, i, i));
   }
 
-  auto eur_usd = DataNode<ForexInstrument>::create(ForexPair::EURUSD, Granularity::M1);
+  auto eur_usd = DataNode<ForexInstrumentNode>::create(ForexPair::EURUSD, Granularity::M1);
   eur_usd->candle_sticks_bid->set_data(candlesticks);
 }
