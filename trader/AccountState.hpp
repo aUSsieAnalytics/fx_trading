@@ -12,7 +12,11 @@ class AccountStateNode : public DataNode<AccountStateNode, AccountState> {
 public:
   AccountStateNode(Broker broker) : DataNode(broker), _broker(broker) {}
 
-  void calculate() { auto local_logger = this->logger; }
+  void calculate() {
+    auto account_margin = StoneX::get_account_margin();
+    this->set_data(
+        {account_margin.cash, account_margin.netEquity, account_margin.margin, Currency::EUR});
+  }
 };
 
 } // namespace DataNodes

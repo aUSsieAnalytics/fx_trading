@@ -2,7 +2,8 @@ cc_test(
     name = "trader_tests",
     srcs = [
         "test_trader_nodes.cpp",
-        "test_forex_instruments.cpp"
+        "test_forex_instruments.cpp",
+        "test_account_node.cpp"
     ],
     includes = ["."],
     size = "small",
