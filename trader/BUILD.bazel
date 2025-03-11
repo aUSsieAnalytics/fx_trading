@@ -12,9 +12,7 @@ cc_library(
         "CandleStickSplitter.hpp",
         "CrossOver.hpp",
         "ForexInstrument.hpp",
-        "AccountState.hpp",
-        "stonex.h",
-        "stonex_types.h"
+        "AccountState.hpp"
     ],
     visibility = ["//visibility:public"],
     includes = ["."]

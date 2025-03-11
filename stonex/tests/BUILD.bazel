@@ -1,0 +1,14 @@
+cc_test(
+    name = "stonex_tests",
+    srcs = [
+        "test_account.cpp"
+    ],
+    includes = ["."],
+    size = "small",
+    deps = [
+        "//types:trading_types",
+        "//stonex:stonex",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
