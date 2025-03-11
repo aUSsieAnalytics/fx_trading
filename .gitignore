@@ -40,3 +40,5 @@
 
 coverage_output/
 *.key
+
+**/.env

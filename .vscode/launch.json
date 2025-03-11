@@ -11,6 +11,7 @@
       "preLaunchTask": "Build debug",
       "cwd": "${workspaceFolder}",
       "environment": [],
+      "envFile": "${workspaceFolder}/.env",
       "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
