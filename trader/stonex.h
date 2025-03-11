@@ -15,6 +15,8 @@ struct AccountCredentials {
   static inline std::string appkey = "";
   static inline std::string password = "";
   static inline bool authorized = false;
+  static inline bool initialized = false;
+  static inline int account_id = 0;
 };
 
 bool authorize_stonex() {
@@ -42,6 +44,12 @@ bool authorize_stonex() {
 
 std::shared_ptr<cpr::Session> session;
 
+AccountResult get_account_info() {
+  session->SetUrl(cpr::Url{std::string(base_url) + "/UserAccount/ClientAndTradingAccount"});
+  cpr::Response resp = StoneX::session->Get();
+  return json::parse(resp.text).template get<AccountResult>();
+}
+
 bool initialize_session() {
   if (!AccountCredentials::authorized) {
     if (!authorize_stonex()) {
@@ -66,13 +74,23 @@ bool initialize_session() {
   std::string sess_id = sess_resp.session;
   header["Session"] = sess_id;
   session->SetHeader(header);
+  auto account_info = get_account_info();
+  AccountCredentials::account_id = account_info.tradingAccounts.at(0).clientAccountId;
+  AccountCredentials::initialized = true;
   return true;
 }
 
-AccountResult get_account_status() {
-  session->SetUrl(cpr::Url{std::string(base_url) + "/UserAccount/ClientAndTradingAccount"});
+ClientAccountMarginResponseDTO get_account_margin() {
+  if (AccountCredentials::account_id == 0) {
+    if (!initialize_session()) {
+      throw std::runtime_error("Could not initialize the session.");
+    }
+  }
+  session->SetUrl(cpr::Url{std::string(base_url) + "/margin/clientAccountMargin"});
+  session->SetParameters(
+      cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)}});
   cpr::Response resp = StoneX::session->Get();
-  return json::parse(resp.text).template get<AccountResult>();
+  return json::parse(resp.text).template get<ClientAccountMarginResponseDTO>();
 }
 
 } // namespace StoneX

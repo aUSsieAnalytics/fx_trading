@@ -12,12 +12,7 @@ class AccountStateNode : public DataNode<AccountStateNode, AccountState> {
 public:
   AccountStateNode(Broker broker) : DataNode(broker), _broker(broker) {}
 
-  void calculate() {
-    auto local_logger = this->logger;
-    auto account_status = StoneX::get_account_status();
-    local_logger->info("number of account holders: " +
-                       std::to_string(account_status.accountHolders.size()));
-  }
+  void calculate() { auto local_logger = this->logger; }
 };
 
 } // namespace DataNodes
