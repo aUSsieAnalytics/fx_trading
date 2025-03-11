@@ -4,8 +4,58 @@
 #include <iostream>
 
 enum CandleStickPrice { OPEN, CLOSE, HIGH, LOW };
+constexpr std::array<std::pair<CandleStickPrice, const char *>, 4> price_to_string = {
+    {{OPEN, "OPEN"}, {CLOSE, "CLOSE"}, {HIGH, "HIGH"}, {LOW, "LOW"}}};
+
+constexpr const std::string_view price_lookup(CandleStickPrice price) {
+  return price_to_string[price].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const CandleStickPrice &price) {
+  return stream << price_lookup(price);
+}
+
+namespace std {
+constexpr const std::string to_string(const CandleStickPrice &price) {
+  return std::string(price_lookup(price));
+}
+} // namespace std
+
 enum OrderDirection { BUY, SELL };
+constexpr std::array<std::pair<OrderDirection, const char *>, 2> order_direction_to_string = {
+    {{BUY, "BUY"}, {SELL, "SELL"}}};
+
+constexpr const std::string_view order_direction_lookup(OrderDirection direction) {
+  return order_direction_to_string[direction].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const OrderDirection &direction) {
+  return stream << order_direction_lookup(direction);
+}
+
+namespace std {
+constexpr const std::string to_string(const OrderDirection &direction) {
+  return std::string(order_direction_lookup(direction));
+}
+} // namespace std
+
 enum Broker { OANDA, FOREXCOM };
+constexpr std::array<std::pair<Broker, const char *>, 2> broker_to_string = {
+    {{OANDA, "OANDA"}, {FOREXCOM, "FOREXCOM"}}};
+
+constexpr const std::string_view broker_lookup(Broker broker) {
+  return broker_to_string[broker].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const Broker &broker) {
+  return stream << broker_lookup(broker);
+}
+
+namespace std {
+constexpr const std::string to_string(const Broker &broker) {
+  return std::string(broker_lookup(broker));
+}
+} // namespace std
 
 struct CandleStick {
   double open;
@@ -183,8 +233,8 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const Granularity
 }
 
 namespace std {
-constexpr const std::string_view to_string(const Granularity &granularity) {
-  return granularity_to_string(granularity);
+constexpr const std::string to_string(const Granularity &granularity) {
+  return std::string(granularity_to_string(granularity));
 }
 } // namespace std
 
@@ -286,7 +336,9 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const ForexPair &
 }
 
 namespace std {
-constexpr const std::string_view to_string(const ForexPair &pair) { return forex_lookup(pair); }
+constexpr const std::string to_string(const ForexPair &pair) {
+  return std::string(forex_lookup(pair));
+}
 } // namespace std
 
 enum Currency {
@@ -328,8 +380,8 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const Currency &c
 }
 
 namespace std {
-constexpr const std::string_view to_string(const Currency &currency) {
-  return currency_lookup(currency);
+constexpr const std::string to_string(const Currency &currency) {
+  return std::string(currency_lookup(currency));
 }
 
 } // namespace std

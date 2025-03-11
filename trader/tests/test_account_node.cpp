@@ -11,4 +11,6 @@ using json = nlohmann::json;
 TEST_F(DataNodeTest, TestAccountState) {
   auto node = DataNode<AccountStateNode>::create(Broker::FOREXCOM);
   node->logger->info(json(node->get_data()).dump());
+  node = DataNode<AccountStateNode>::create(Broker::OANDA);
+  node->calculate();
 }
