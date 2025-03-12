@@ -1,4 +1,5 @@
 #include "stonex.h"
+#include "trading_types.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -11,4 +12,6 @@ TEST(StoneXTest, TestAccountState) {
   std::cout << json(account_info) << "\n";
   auto margin_summary = StoneX::get_account_margin();
   std::cout << json(margin_summary) << "\n";
+  auto market = StoneX::get_market_info(ForexPair::EURUSD);
+  std::cout << json(market) << "\n";
 }

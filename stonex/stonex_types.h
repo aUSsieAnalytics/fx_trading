@@ -20,15 +20,17 @@ void fill_from_json(std::vector<T> &vector, const std::string &name, const json 
   }
   vector.reserve(item.size());
   for (auto &_j : item) {
-    T x = _j.template get<T>();
-    vector.push_back(x);
+    vector.push_back(_j.template get<T>());
   }
 }
 
 template <typename T>
 typename std::enable_if<!is_std_vector<T>::value, void>::type
 fill_from_json(T &member, const std::string &name, const json &j) {
-  j.at(name).get_to(member);
+  auto item = j.at(name);
+  if (item != nullptr) {
+    item.get_to(member);
+  }
 }
 
 // // Helper macros for JSON serialization/deserialization
@@ -579,7 +581,7 @@ struct ApiStepMarginDTO {
   bool eligibleForStepMargin;
   bool stepMarginConfigured;
   bool inheritedFromParentAccountOperator;
-  ApiStepMarginBandDTO bands;
+  std::vector<ApiStepMarginBandDTO> bands;
 };
 void from_json(const json &j, ApiStepMarginDTO &resp) {
   if (j == nullptr)
@@ -599,13 +601,13 @@ void to_json(json &j, const ApiStepMarginDTO &o) {
 }
 
 struct ApiFxFinancingDTO {
-  long captureDateTime;
+  std::string captureDateTime;
   double longPoints;
   double shortPoints;
   double longCharge;
   double shortCharge;
   double quantity;
-  int chargeCurrenyId;
+  int chargeCurrencyId;
   int daysToRoll;
 };
 void from_json(const json &j, ApiFxFinancingDTO &resp) {
@@ -617,15 +619,15 @@ void from_json(const json &j, ApiFxFinancingDTO &resp) {
   fill_from_json(resp.longCharge, "longCharge", j);
   fill_from_json(resp.shortCharge, "shortCharge", j);
   fill_from_json(resp.quantity, "quantity", j);
-  fill_from_json(resp.chargeCurrenyId, "chargeCurrenyId", j);
+  fill_from_json(resp.chargeCurrencyId, "chargeCurrencyId", j);
   fill_from_json(resp.daysToRoll, "daysToRoll", j);
 }
 void to_json(json &j, const ApiFxFinancingDTO &o) {
   j = json{
-      {"captureDateTime", o.captureDateTime}, {"longPoints", o.longPoints},
-      {"shortPoints", o.shortPoints},         {"longCharge", o.longCharge},
-      {"shortCharge", o.shortCharge},         {"quantity", o.quantity},
-      {"chargeCurrenyId", o.chargeCurrenyId}, {"daysToRoll", o.daysToRoll},
+      {"captureDateTime", o.captureDateTime},   {"longPoints", o.longPoints},
+      {"shortPoints", o.shortPoints},           {"longCharge", o.longCharge},
+      {"shortCharge", o.shortCharge},           {"quantity", o.quantity},
+      {"chargeCurrencyId", o.chargeCurrencyId}, {"daysToRoll", o.daysToRoll},
   };
 }
 
@@ -732,8 +734,8 @@ struct ApiMarketInformationDTO {
   std::string exchangeName;
   double marginFactor;
   double minMarginFactor;
-  int marginfactorUnits;
-  double maxMarginfactor;
+  int marginFactorUnits;
+  double maxMarginFactor;
   double clientMarginFactor;
   double minDistance;
   int minDistanceUnits;
@@ -751,7 +753,7 @@ struct ApiMarketInformationDTO {
   bool longPositionOnly;
   bool closeOnly;
   double incrementSize;
-  ApiMarketEodDTO marketEod;
+  std::vector<ApiMarketEodDTO> marketEod;
   double priceTolerance;
   int convertPriceToPipsMultiplier;
   int marketSettingsTypeId;
@@ -763,11 +765,11 @@ struct ApiMarketInformationDTO {
   double phoneMinSize;
   std::string dailyFinancingAppliedAtUtc;
   std::string nextMarketEodTimeUtc;
-  std::string TradingStartTimeUtc;
-  std::string TradingEndTimeUtc;
-  ApiTradingDayTimesDTO marketPricingTimes;
-  ApiTradingDayTimesDTO marketBreakTimes;
-  ApiMarketSpreadDTO marketSpreads;
+  std::string tradingStartTimeUtc;
+  std::string tradingEndTimeUtc;
+  std::vector<ApiTradingDayTimesDTO> marketPricingTimes;
+  std::vector<ApiTradingDayTimesDTO> marketBreakTimes;
+  std::vector<ApiMarketSpreadDTO> marketSpreads;
   double guaranteedOrderPremium;
   int guaranteedOrderPremiumUnits;
   double guaranteedOrderMinDistance;
@@ -782,9 +784,9 @@ struct ApiMarketInformationDTO {
   bool allowGuaranteedOrders;
   bool ordersAwareMargining;
   double ordersAwareMarginingMinimum;
-  double commisionChargeMinimum;
-  double commisionRate;
-  int commisionRateUnits;
+  double commissionChargeMinimum;
+  double commissionRate;
+  int commissionRateUnits;
   std::string expiryUtc;
   ApiStepMarginDTO stepMargin;
   std::string futureRolloverUTC;
@@ -805,7 +807,7 @@ struct ApiMarketInformationDTO {
   bool isDMA;
   bool isKnockout;
   ApiKnockoutDTO knockout;
-  CorporateActionsDTO corporateActions;
+  std::vector<CorporateActionsDTO> corporateActions;
   MarketPricesDTO prices;
   IdentifiersDTO identifiers;
   int marketUnderlyingId;
@@ -821,8 +823,8 @@ void from_json(const json &j, ApiMarketInformationDTO &resp) {
   fill_from_json(resp.exchangeName, "exchangeName", j);
   fill_from_json(resp.marginFactor, "marginFactor", j);
   fill_from_json(resp.minMarginFactor, "minMarginFactor", j);
-  fill_from_json(resp.marginfactorUnits, "marginfactorUnits", j);
-  fill_from_json(resp.maxMarginfactor, "maxMarginfactor", j);
+  fill_from_json(resp.marginFactorUnits, "marginFactorUnits", j);
+  fill_from_json(resp.maxMarginFactor, "maxMarginFactor", j);
   fill_from_json(resp.clientMarginFactor, "clientMarginFactor", j);
   fill_from_json(resp.minDistance, "minDistance", j);
   fill_from_json(resp.minDistanceUnits, "minDistanceUnits", j);
@@ -852,8 +854,8 @@ void from_json(const json &j, ApiMarketInformationDTO &resp) {
   fill_from_json(resp.phoneMinSize, "phoneMinSize", j);
   fill_from_json(resp.dailyFinancingAppliedAtUtc, "dailyFinancingAppliedAtUtc", j);
   fill_from_json(resp.nextMarketEodTimeUtc, "nextMarketEodTimeUtc", j);
-  fill_from_json(resp.TradingStartTimeUtc, "TradingStartTimeUtc", j);
-  fill_from_json(resp.TradingEndTimeUtc, "TradingEndTimeUtc", j);
+  fill_from_json(resp.tradingStartTimeUtc, "tradingStartTimeUtc", j);
+  fill_from_json(resp.tradingEndTimeUtc, "tradingEndTimeUtc", j);
   fill_from_json(resp.marketPricingTimes, "marketPricingTimes", j);
   fill_from_json(resp.marketBreakTimes, "marketBreakTimes", j);
   fill_from_json(resp.marketSpreads, "marketSpreads", j);
@@ -871,9 +873,9 @@ void from_json(const json &j, ApiMarketInformationDTO &resp) {
   fill_from_json(resp.allowGuaranteedOrders, "allowGuaranteedOrders", j);
   fill_from_json(resp.ordersAwareMargining, "ordersAwareMargining", j);
   fill_from_json(resp.ordersAwareMarginingMinimum, "ordersAwareMarginingMinimum", j);
-  fill_from_json(resp.commisionChargeMinimum, "commisionChargeMinimum", j);
-  fill_from_json(resp.commisionRate, "commisionRate", j);
-  fill_from_json(resp.commisionRateUnits, "commisionRateUnits", j);
+  fill_from_json(resp.commissionChargeMinimum, "commissionChargeMinimum", j);
+  fill_from_json(resp.commissionRate, "commissionRate", j);
+  fill_from_json(resp.commissionRateUnits, "commissionRateUnits", j);
   fill_from_json(resp.expiryUtc, "expiryUtc", j);
   fill_from_json(resp.stepMargin, "stepMargin", j);
   fill_from_json(resp.futureRolloverUTC, "futureRolloverUTC", j);
@@ -890,7 +892,7 @@ void from_json(const json &j, ApiMarketInformationDTO &resp) {
   fill_from_json(resp.underlyingRicCode, "underlyingRicCode", j);
   fill_from_json(resp.newsUnderlyingOverrideType, "newsUnderlyingOverrideType", j);
   fill_from_json(resp.newsUnderlyingOverrideCode, "newsUnderlyingOverrideCode", j);
-  fill_from_json(resp.trailingStepConversionFactor, "trailingStepConversionFactor", j);
+  // fill_from_json(resp.trailingStepConversionFactor, "trailingStepConversionFactor", j);
   fill_from_json(resp.isDMA, "isDMA", j);
   fill_from_json(resp.isKnockout, "isKnockout", j);
   fill_from_json(resp.knockout, "knockout", j);
@@ -909,8 +911,8 @@ void to_json(json &j, const ApiMarketInformationDTO &o) {
       {"exchangeName", o.exchangeName},
       {"marginFactor", o.marginFactor},
       {"minMarginFactor", o.minMarginFactor},
-      {"marginfactorUnits", o.marginfactorUnits},
-      {"maxMarginfactor", o.maxMarginfactor},
+      {"marginFactorUnits", o.marginFactorUnits},
+      {"maxMarginFactor", o.maxMarginFactor},
       {"clientMarginFactor", o.clientMarginFactor},
       {"minDistance", o.minDistance},
       {"minDistanceUnits", o.minDistanceUnits},
@@ -940,8 +942,8 @@ void to_json(json &j, const ApiMarketInformationDTO &o) {
       {"phoneMinSize", o.phoneMinSize},
       {"dailyFinancingAppliedAtUtc", o.dailyFinancingAppliedAtUtc},
       {"nextMarketEodTimeUtc", o.nextMarketEodTimeUtc},
-      {"TradingStartTimeUtc", o.TradingStartTimeUtc},
-      {"TradingEndTimeUtc", o.TradingEndTimeUtc},
+      {"tradingStartTimeUtc", o.tradingStartTimeUtc},
+      {"tradingEndTimeUtc", o.tradingEndTimeUtc},
       {"marketPricingTimes", o.marketPricingTimes},
       {"marketBreakTimes", o.marketBreakTimes},
       {"marketSpreads", o.marketSpreads},
@@ -959,9 +961,9 @@ void to_json(json &j, const ApiMarketInformationDTO &o) {
       {"allowGuaranteedOrders", o.allowGuaranteedOrders},
       {"ordersAwareMargining", o.ordersAwareMargining},
       {"ordersAwareMarginingMinimum", o.ordersAwareMarginingMinimum},
-      {"commisionChargeMinimum", o.commisionChargeMinimum},
-      {"commisionRate", o.commisionRate},
-      {"commisionRateUnits", o.commisionRateUnits},
+      {"commissionChargeMinimum", o.commissionChargeMinimum},
+      {"commissionRate", o.commissionRate},
+      {"commissionRateUnits", o.commissionRateUnits},
       {"expiryUtc", o.expiryUtc},
       {"stepMargin", o.stepMargin},
       {"futureRolloverUTC", o.futureRolloverUTC},
@@ -978,7 +980,7 @@ void to_json(json &j, const ApiMarketInformationDTO &o) {
       {"underlyingRicCode", o.underlyingRicCode},
       {"newsUnderlyingOverrideType", o.newsUnderlyingOverrideType},
       {"newsUnderlyingOverrideCode", o.newsUnderlyingOverrideCode},
-      {"trailingStepConversionFactor", o.trailingStepConversionFactor},
+      // {"trailingStepConversionFactor", o.trailingStepConversionFactor},
       {"isDMA", o.isDMA},
       {"isKnockout", o.isKnockout},
       {"knockout", o.knockout},
@@ -1014,8 +1016,8 @@ void to_json(json &j, const ApiMarketTagDTO &o) {
 }
 
 struct FullMarketInformationSearchWithTagsResponseDTO {
-  ApiMarketInformationDTO marketInformation;
-  ApiMarketTagDTO tags;
+  std::vector<ApiMarketInformationDTO> marketInformation;
+  std::vector<ApiMarketTagDTO> tags;
 };
 void from_json(const json &j, FullMarketInformationSearchWithTagsResponseDTO &resp) {
   if (j == nullptr)

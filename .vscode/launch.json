@@ -2,6 +2,36 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "StoneX test",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/stonex/tests/stonex_tests",
+      "args": [],
+      "stopAtEntry": false,
+      "preLaunchTask": "Build debug",
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "envFile": "${workspaceFolder}/.env",
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          },
+          {
+              "description": "Set Disassembly Flavor to Intel",
+              "text": "-gdb-set disassembly-flavor intel",
+              "ignoreFailures": true
+          }
+      ],
+      "sourceFileMap":{
+        // get the path you need here with `bazel info execution_root`
+        "/home/vscode/.cache/bazel/_bazel_vscode/273517cedf802bda051df08c77b29fc6/execroot/_main": "${workspaceFolder}"
+      }
+    },
+    {
       "name": "Trader test",
       "type": "cppdbg",
       "request": "launch",

@@ -1,6 +1,7 @@
 #pragma once
 #include "cpr/cpr.h"
 #include "stonex_types.h"
+#include "trading_types.hpp"
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 
@@ -9,6 +10,7 @@ using json = nlohmann::json;
 namespace StoneX {
 
 const inline std::string_view base_url = "https://ciapi.cityindex.com/v2";
+std::unordered_map<std::string, ApiMarketInformationDTO> markets;
 
 struct AccountCredentials {
   static inline std::string username = "";
@@ -45,6 +47,11 @@ bool authorize_stonex() {
 std::shared_ptr<cpr::Session> session;
 
 AccountResult get_account_info() {
+  if (!AccountCredentials::authorized) {
+    if (!authorize_stonex()) {
+      throw std::runtime_error("Could not initialize session.");
+    }
+  }
   session->SetUrl(cpr::Url{std::string(base_url) + "/UserAccount/ClientAndTradingAccount"});
   cpr::Response resp = StoneX::session->Get();
   return json::parse(resp.text).template get<AccountResult>();
@@ -91,6 +98,33 @@ ClientAccountMarginResponseDTO get_account_margin() {
       cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)}});
   cpr::Response resp = StoneX::session->Get();
   return json::parse(resp.text).template get<ClientAccountMarginResponseDTO>();
+}
+
+ApiMarketInformationDTO get_market_info(ForexPair pair) {
+  std::string pair_as_string = std::to_string(pair);
+  std::string search_string = pair_as_string;
+  if (markets.contains(pair_as_string)) {
+    return markets[pair_as_string];
+  }
+
+  if (AccountCredentials::account_id == 0) {
+    if (!initialize_session()) {
+      throw std::runtime_error("Could not initialize the session.");
+    }
+  }
+
+  search_string.insert(3, "/");
+  session->SetUrl(cpr::Url{std::string(base_url) + "/market/fullSearchWithTags"});
+  session->SetParameters(
+      cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
+                      {"query", search_string},
+                      {"searchByMarketName", "true"},
+                      {"maxResults", "50"}});
+  cpr::Response resp = StoneX::session->Get();
+  FullMarketInformationSearchWithTagsResponseDTO found_markets =
+      json::parse(resp.text).template get<FullMarketInformationSearchWithTagsResponseDTO>();
+  markets[pair_as_string] = found_markets.marketInformation[0];
+  return markets[pair_as_string];
 }
 
 } // namespace StoneX
