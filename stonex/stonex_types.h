@@ -33,30 +33,6 @@ fill_from_json(T &member, const std::string &name, const json &j) {
   }
 }
 
-// // Helper macros for JSON serialization/deserialization
-// #define TO_JSON(member) j[#member] = o.member;
-// #define FROM_JSON(member) fill_from_json(o.member, std::string(#member), j);
-
-// // Helper macro to expand each field macro call
-// #define EXPAND(macro, ...) EXPAND_HELPER(macro, __VA_ARGS__)
-// #define EXPAND_HELPER(macro, x, ...) macro(x) __VA_OPT__(EXPAND_RECURSE(macro, __VA_ARGS__))
-// #define EXPAND_RECURSE(macro, x, ...) macro(x) EXPAND_RECURSE(macro, __VA_ARGS__)
-// #define EXPAND_RECURSE(macro)
-
-// // Macro to declare struct and generate to_json/from_json
-// #define DECLARE_STRUCT(struct_name, members, ...)                               \
-//     struct struct_name {                                                       \
-//         members;                                                              \
-//     };                                                                         \
-//     inline void to_json(json& j, const struct_name& o) {                      \
-//         j = json();                                                           \
-//         EXPAND(TO_JSON, __VA_ARGS__)                                           \
-//     }                                                                          \
-//     inline void from_json(const json& j, struct_name& o) {                    \
-//         if (j == nullptr) return;                                              \
-//         EXPAND(FROM_JSON, __VA_ARGS__)                                         \
-//     }
-
 namespace StoneX {
 
 struct Api2FALogonOnResponseDTO {
