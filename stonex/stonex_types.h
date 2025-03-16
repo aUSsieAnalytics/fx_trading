@@ -1,37 +1,11 @@
 #pragma once
+#include "trading_types.hpp"
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
 using json = nlohmann::json;
-
-template <typename> struct is_std_vector : std::false_type {};
-
-template <typename T> struct is_std_vector<std::vector<T>> : std::true_type {};
-
-template <typename T>
-void fill_from_json(std::vector<T> &vector, const std::string &name, const json &j) {
-  auto item = j.at(name);
-  if (item == nullptr) {
-    vector.clear();
-    vector.reserve(0);
-    return;
-  }
-  vector.reserve(item.size());
-  for (auto &_j : item) {
-    vector.push_back(_j.template get<T>());
-  }
-}
-
-template <typename T>
-typename std::enable_if<!is_std_vector<T>::value, void>::type
-fill_from_json(T &member, const std::string &name, const json &j) {
-  auto item = j.at(name);
-  if (item != nullptr) {
-    item.get_to(member);
-  }
-}
 
 namespace StoneX {
 
@@ -1005,6 +979,47 @@ void to_json(json &j, const FullMarketInformationSearchWithTagsResponseDTO &o) {
   j = json{
       {"marketInformation", o.marketInformation},
       {"tags", o.tags},
+  };
+}
+
+struct PriceBarDTO {
+  std::string barDate;
+  double open;
+  double close;
+  double high;
+  double low;
+  double volume;
+};
+void from_json(const json &j, PriceBarDTO &resp) {
+  if (j == nullptr)
+    return;
+  fill_from_json(resp.barDate, "BarDate", j);
+  fill_from_json(resp.open, "Open", j);
+  fill_from_json(resp.close, "Close", j);
+  fill_from_json(resp.high, "High", j);
+  fill_from_json(resp.low, "Low", j);
+}
+void to_json(json &j, const PriceBarDTO &o) {
+  j = json{
+      {"BarDate", o.barDate}, {"Open", o.open}, {"Close", o.close},
+      {"High", o.high},       {"Low", o.low},   {"Volume", o.volume},
+  };
+}
+
+struct GetPriceBarResponseDTO {
+  std::vector<PriceBarDTO> priceBars;
+  PriceBarDTO partialPriceBar;
+};
+void from_json(const json &j, GetPriceBarResponseDTO &resp) {
+  if (j == nullptr)
+    return;
+  fill_from_json(resp.priceBars, "PriceBars", j);
+  fill_from_json(resp.partialPriceBar, "PartialPriceBar", j);
+}
+void to_json(json &j, const GetPriceBarResponseDTO &o) {
+  j = json{
+      {"PriceBars", o.priceBars},
+      {"PartialPriceBar", o.partialPriceBar},
   };
 }
 

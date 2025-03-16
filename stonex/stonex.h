@@ -10,6 +10,7 @@ using json = nlohmann::json;
 namespace StoneX {
 
 const inline std::string_view base_url = "https://ciapi.cityindex.com/v2";
+const inline std::string_view trading_url = "https://ciapi.cityindex.com/TradingAPI";
 std::unordered_map<std::string, ApiMarketInformationDTO> markets;
 
 struct AccountCredentials {
@@ -125,6 +126,22 @@ ApiMarketInformationDTO get_market_info(ForexPair pair) {
       json::parse(resp.text).template get<FullMarketInformationSearchWithTagsResponseDTO>();
   markets[pair_as_string] = found_markets.marketInformation[0];
   return markets[pair_as_string];
+}
+
+GetPriceBarResponseDTO get_latest_price_bars(ForexPair pair, int number_of_bars, int span,
+                                             CandlePeriodUnit period_unit,
+                                             PriceType price_type = PriceType::MID) {
+  std::string market_id = std::to_string(get_market_info(pair).marketId);
+  session->SetUrl(cpr::Url{std::string(trading_url) + "/market/" + market_id + "/barhistory"});
+  session->SetParameters(
+      cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
+                      {"span", std::to_string(span)},
+                      {"interval", std::to_string(period_unit)},
+                      {"PriceType", std::to_string(price_type)},
+                      {"PriceBars", std::to_string(number_of_bars)}});
+  cpr::Response resp = StoneX::session->Get();
+  GetPriceBarResponseDTO candles = json::parse(resp.text).template get<GetPriceBarResponseDTO>();
+  return candles;
 }
 
 } // namespace StoneX
