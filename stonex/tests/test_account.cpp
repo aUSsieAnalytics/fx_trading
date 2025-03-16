@@ -16,10 +16,5 @@ TEST(StoneXTest, TestStoneX) {
   // std::cout << json(market) << "\n";
   auto candles = StoneX::get_latest_price_bars(ForexPair::EURUSD, 20, 15, CandlePeriodUnit::MINUTE,
                                                PriceType::MID);
-
-  for (int i = 0; i < 100; i++) {
-    candles = StoneX::get_latest_price_bars(ForexPair::EURUSD, 20, 15, CandlePeriodUnit::MINUTE,
-                                            PriceType::MID);
-  }
   // std::cout << json(candles) << "\n";
 }
