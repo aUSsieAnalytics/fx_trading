@@ -1,7 +1,8 @@
 cc_test(
     name = "stonex_tests",
     srcs = [
-        "test_account.cpp"
+        "test_account.cpp",
+        "test_jsonize.cpp"
     ],
     includes = ["."],
     size = "small",
