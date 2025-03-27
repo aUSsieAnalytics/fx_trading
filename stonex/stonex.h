@@ -144,4 +144,23 @@ GetPriceBarResponseDTO get_latest_price_bars(ForexPair pair, int number_of_bars,
   return candles;
 }
 
+GetPriceBarResponseDTO get_price_bars_between(ForexPair pair, long utc_from, long utc_to, int span,
+                                              CandlePeriodUnit period_unit,
+                                              PriceType price_type = PriceType::MID) {
+  std::string market_id = std::to_string(get_market_info(pair).marketId);
+  session->SetUrl(
+      cpr::Url{std::string(trading_url) + "/market/" + market_id + "/barhistorybetween"});
+  session->SetParameters(
+      cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
+                      {"span", std::to_string(span)},
+                      {"fromTimestampUTC", std::to_string(utc_from)},
+                      {"toTimestampUTC", std::to_string(utc_to)},
+                      {"interval", std::to_string(period_unit)},
+                      {"maxResults", "4000"},
+                      {"priceType", std::to_string(price_type)}});
+  cpr::Response resp = StoneX::session->Get();
+  GetPriceBarResponseDTO candles = json::parse(resp.text).template get<GetPriceBarResponseDTO>();
+  return candles;
+}
+
 } // namespace StoneX
