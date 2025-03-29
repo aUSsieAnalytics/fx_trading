@@ -11,6 +11,17 @@ cc_test(
         "//stonex:stonex",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
-        "@cpp-httplib//:cpp-httplib"
+        "//stonex/tests:stonex_mock"
     ],
+)
+
+cc_library(
+    name = "stonex_mock",
+    deps = [
+        "//stonex:stonex",
+        "@googletest//:gtest",
+        "@cpp-httplib//:cpp-httplib"],
+    includes = ["."],
+    visibility = ["//visibility:public"],
+    hdrs = ["stonex_mock.hpp"],
 )

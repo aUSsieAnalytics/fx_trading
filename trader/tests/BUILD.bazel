@@ -12,6 +12,7 @@ cc_test(
         "//data_node:data_node",
         "//data_node_signal_processing:signal_processing",
         "//types:trading_types",
-        "//trader:trader"
+        "//trader:trader",
+        "//stonex/tests:stonex_mock"
     ],
 )
