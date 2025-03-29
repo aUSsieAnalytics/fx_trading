@@ -11,5 +11,6 @@ cc_test(
         "//stonex:stonex",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@cpp-httplib//:cpp-httplib"
     ],
 )

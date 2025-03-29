@@ -9,8 +9,12 @@ using json = nlohmann::json;
 
 namespace StoneX {
 
-const inline std::string_view base_url = "https://ciapi.cityindex.com/v2";
-const inline std::string_view trading_url = "https://ciapi.cityindex.com/TradingAPI";
+const inline std::string base_url = "https://ciapi.cityindex.com/v2";
+const inline std::string trading_url = "https://ciapi.cityindex.com/TradingAPI";
+
+inline std::shared_ptr<std::string> base_url_ptr = std::make_shared<std::string>(base_url);
+inline std::shared_ptr<std::string> trading_url_ptr = std::make_shared<std::string>(trading_url);
+
 std::unordered_map<std::string, ApiMarketInformationDTO> markets;
 
 struct AccountCredentials {
@@ -45,7 +49,7 @@ bool authorize_stonex() {
   return true;
 }
 
-std::shared_ptr<cpr::Session> session;
+inline std::shared_ptr<cpr::Session> session = std::make_shared<cpr::Session>();
 
 AccountResult get_account_info() {
   if (!AccountCredentials::authorized) {
@@ -53,7 +57,7 @@ AccountResult get_account_info() {
       throw std::runtime_error("Could not initialize session.");
     }
   }
-  session->SetUrl(cpr::Url{std::string(base_url) + "/UserAccount/ClientAndTradingAccount"});
+  session->SetUrl(cpr::Url{*base_url_ptr + "/UserAccount/ClientAndTradingAccount"});
   cpr::Response resp = StoneX::session->Get();
   return json::parse(resp.text).template get<AccountResult>();
 }
@@ -70,10 +74,9 @@ bool initialize_session() {
                             .dump());
   auto header =
       cpr::Header{{"Content-Type", "application/json"}, {"UserName", AccountCredentials::username}};
-  session = std::make_shared<cpr::Session>();
   session->SetHeader(header);
   session->SetBody(body);
-  session->SetUrl(cpr::Url{std::string(base_url) + "/Session"});
+  session->SetUrl(cpr::Url{*base_url_ptr + "/Session"});
   cpr::Response resp = session->Post();
   if (resp.status_code != 200) {
     return false;
@@ -94,7 +97,7 @@ ClientAccountMarginResponseDTO get_account_margin() {
       throw std::runtime_error("Could not initialize the session.");
     }
   }
-  session->SetUrl(cpr::Url{std::string(base_url) + "/margin/clientAccountMargin"});
+  session->SetUrl(cpr::Url{*base_url_ptr + "/margin/clientAccountMargin"});
   session->SetParameters(
       cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)}});
   cpr::Response resp = StoneX::session->Get();
@@ -115,7 +118,7 @@ ApiMarketInformationDTO get_market_info(ForexPair pair) {
   }
 
   search_string.insert(3, "/");
-  session->SetUrl(cpr::Url{std::string(base_url) + "/market/fullSearchWithTags"});
+  session->SetUrl(cpr::Url{*base_url_ptr + "/market/fullSearchWithTags"});
   session->SetParameters(
       cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
                       {"query", search_string},
@@ -132,7 +135,7 @@ GetPriceBarResponseDTO get_latest_price_bars(ForexPair pair, int number_of_bars,
                                              CandlePeriodUnit period_unit,
                                              PriceType price_type = PriceType::MID) {
   std::string market_id = std::to_string(get_market_info(pair).marketId);
-  session->SetUrl(cpr::Url{std::string(trading_url) + "/market/" + market_id + "/barhistory"});
+  session->SetUrl(cpr::Url{*trading_url_ptr + "/market/" + market_id + "/barhistory"});
   session->SetParameters(
       cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
                       {"span", std::to_string(span)},
@@ -148,8 +151,7 @@ GetPriceBarResponseDTO get_price_bars_between(ForexPair pair, long utc_from, lon
                                               CandlePeriodUnit period_unit,
                                               PriceType price_type = PriceType::MID) {
   std::string market_id = std::to_string(get_market_info(pair).marketId);
-  session->SetUrl(
-      cpr::Url{std::string(trading_url) + "/market/" + market_id + "/barhistorybetween"});
+  session->SetUrl(cpr::Url{*trading_url_ptr + "/market/" + market_id + "/barhistorybetween"});
   session->SetParameters(
       cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
                       {"span", std::to_string(span)},
