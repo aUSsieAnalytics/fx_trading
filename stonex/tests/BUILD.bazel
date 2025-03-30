@@ -15,12 +15,28 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "stonex_tests_live",
+    srcs = [
+        "test_live_account.cpp",
+    ],
+    includes = ["."],
+    size = "small",
+    deps = [
+        "//types:trading_types",
+        "//stonex:stonex",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "stonex_mock",
     deps = [
         "//stonex:stonex",
         "@googletest//:gtest",
-        "@cpp-httplib//:cpp-httplib"],
+        "@cpp-httplib//:cpp-httplib"
+    ],
     includes = ["."],
     visibility = ["//visibility:public"],
     hdrs = ["stonex_mock.hpp"],

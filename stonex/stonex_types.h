@@ -16,8 +16,6 @@ struct Api2FALogonOnResponseDTO {
 };
 
 inline void from_json(const json &j, Api2FALogonOnResponseDTO &resp) {
-  if (j == nullptr)
-    return;
   j.at("contactId").get_to(resp.contactId);
   j.at("contactCategoryId").get_to(resp.contactCategoryId);
   j.at("value").get_to(resp.value);
@@ -41,8 +39,6 @@ struct ApiLogOnResponseDTO {
 };
 
 inline void from_json(const json &j, ApiLogOnResponseDTO &resp) {
-  if (j == nullptr)
-    return;
 
   j.at("session").get_to(resp.session);
   j.at("passwordChangeRequired").get_to(resp.passwordChangeRequired);
@@ -69,8 +65,7 @@ struct LegalPartyDTO {
   bool isPiisProvided;
 };
 inline void from_json(const json &j, LegalPartyDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("partyId").get_to(resp.partyId);
   j.at("personalEmailAddress").get_to(resp.personalEmailAddress);
   j.at("hasMultipleEmailAddresses").get_to(resp.hasMultipleEmailAddresses);
@@ -92,8 +87,7 @@ struct Timestamp {
   int nanos;
 };
 inline void from_json(const json &j, Timestamp &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("seconds").get_to(resp.seconds);
   j.at("nanos").get_to(resp.nanos);
 }
@@ -151,8 +145,7 @@ struct ApiAccountHolderDTO {
   std::string name;
 };
 inline void from_json(const json &j, ApiAccountHolderDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("partyId").get_to(resp.partyId);
   j.at("name").get_to(resp.name);
 }
@@ -172,8 +165,7 @@ struct ApiTradingAccountDTO {
   std::string tradingAccountName;
 };
 inline void from_json(const json &j, ApiTradingAccountDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("clientAccountId").get_to(resp.clientAccountId);
   j.at("tradingAccountId").get_to(resp.tradingAccountId);
   j.at("tradingAccountCode").get_to(resp.tradingAccountCode);
@@ -202,8 +194,7 @@ struct ApiAccountOperatorDTO {
   int serviceOfferingId;
 };
 inline void from_json(const json &j, ApiAccountOperatorDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("accountOperatorId").get_to(resp.accountOperatorId);
   j.at("is2FAEnabledAO").get_to(resp.is2FAEnabledAO);
   j.at("isNfaEnabledClient").get_to(resp.isNfaEnabledClient);
@@ -226,8 +217,7 @@ struct ApiClientAccountTokenDTO {
   std::string token;
 };
 inline void from_json(const json &j, ApiClientAccountTokenDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("clientAccountId").get_to(resp.clientAccountId);
   j.at("token").get_to(resp.token);
 }
@@ -244,8 +234,7 @@ struct ApiContractDTO {
   int contractType;
 };
 inline void from_json(const json &j, ApiContractDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("contractId").get_to(resp.contractId);
   j.at("isNIGO").get_to(resp.isNIGO);
   j.at("contractType").get_to(resp.contractType);
@@ -264,8 +253,7 @@ struct ApiRestrictionDTO {
   bool acceptNewBusiness;
 };
 inline void from_json(const json &j, ApiRestrictionDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("clientAccountId").get_to(resp.clientAccountId);
   j.at("closeOnly").get_to(resp.closeOnly);
   j.at("acceptNewBusiness").get_to(resp.acceptNewBusiness);
@@ -282,8 +270,7 @@ struct LogonUser {
   std::string logonUserName;
 };
 inline void from_json(const json &j, LogonUser &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("logonUserName").get_to(resp.logonUserName);
 }
 inline void to_json(json &j, const LogonUser &o) {
@@ -303,8 +290,7 @@ struct LinkedAccountResult {
   std::vector<ApiRestrictionDTO> restrictions;
 };
 inline void from_json(const json &j, LinkedAccountResult &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("logonUser").get_to(resp.logonUser);
   fill_from_json(resp.legalParties, "legalParties", j);
   fill_from_json(resp.accountHolders, "accountHolders", j);
@@ -331,8 +317,7 @@ struct CashEquity {
   ApiClientAccountTokenDTO clientAccountToken;
 };
 inline void from_json(const json &j, CashEquity &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("clientAccountToken").get_to(resp.clientAccountToken);
 }
 inline void to_json(json &j, const CashEquity &o) {
@@ -354,8 +339,7 @@ struct AccountResult {
 };
 
 inline void from_json(const json &j, AccountResult &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.legalParties, "legalParties", j);
   fill_from_json(resp.accountHolders, "accountHolders", j);
   fill_from_json(resp.clientAccounts, "clientAccounts", j);
@@ -394,8 +378,7 @@ struct ClientAccountMarginResponseDTO {
   std::string currencyIsoCode;
 };
 inline void from_json(const json &j, ClientAccountMarginResponseDTO &resp) {
-  if (j == nullptr)
-    return;
+
   j.at("cash").get_to(resp.cash);
   j.at("margin").get_to(resp.margin);
   j.at("marginIndicator").get_to(resp.marginIndicator);
@@ -440,8 +423,7 @@ struct ApiMarketEodDTO {
   int marketEodAmount;
 };
 inline void from_json(const json &j, ApiMarketEodDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.marketEodUnit, "marketEodUnit", j);
   fill_from_json(resp.marketEodAmount, "marketEodAmount", j);
 }
@@ -457,8 +439,7 @@ struct ApiDateTimeOffsetDTO {
   int offsetMinutes;
 };
 inline void from_json(const json &j, ApiDateTimeOffsetDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.utcDateTime, "utcDateTime", j);
   fill_from_json(resp.offsetMinutes, "offsetMinutes", j);
 }
@@ -475,8 +456,7 @@ struct ApiTradingDayTimesDTO {
   ApiDateTimeOffsetDTO endTimeUtc;
 };
 inline void from_json(const json &j, ApiTradingDayTimesDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.dayOfWeek, "dayOfWeek", j);
   fill_from_json(resp.startTimeUtc, "startTimeUtc", j);
   fill_from_json(resp.endTimeUtc, "endTimeUtc", j);
@@ -495,8 +475,7 @@ struct ApiMarketSpreadDTO {
   int spreadUnits;
 };
 inline void from_json(const json &j, ApiMarketSpreadDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.spreadTimeUtc, "spreadTimeUtc", j);
   fill_from_json(resp.spread, "spread", j);
   fill_from_json(resp.spreadUnits, "spreadUnits", j);
@@ -514,8 +493,7 @@ struct ApiStepMarginBandDTO {
   double marginFactor;
 };
 inline void from_json(const json &j, ApiStepMarginBandDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.lowerBound, "lowerBound", j);
   fill_from_json(resp.marginFactor, "marginFactor", j);
 }
@@ -533,8 +511,7 @@ struct ApiStepMarginDTO {
   std::vector<ApiStepMarginBandDTO> bands;
 };
 inline void from_json(const json &j, ApiStepMarginDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.eligibleForStepMargin, "eligibleForStepMargin", j);
   fill_from_json(resp.stepMarginConfigured, "stepMarginConfigured", j);
   fill_from_json(resp.inheritedFromParentAccountOperator, "inheritedFromParentAccountOperator", j);
@@ -560,8 +537,7 @@ struct ApiFxFinancingDTO {
   int daysToRoll;
 };
 inline void from_json(const json &j, ApiFxFinancingDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.captureDateTime, "captureDateTime", j);
   fill_from_json(resp.longPoints, "longPoints", j);
   fill_from_json(resp.shortPoints, "shortPoints", j);
@@ -589,8 +565,7 @@ struct ApiKnockoutDTO {
   int knockoutMinDistanceUnits;
 };
 inline void from_json(const json &j, ApiKnockoutDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.pairedMarkets, "pairedMarkets", j);
   fill_from_json(resp.knockoutLevels, "knockoutLevels", j);
   fill_from_json(resp.knockoutIncrement, "knockoutIncrement", j);
@@ -613,8 +588,7 @@ struct CorporateActionsDTO {
   int corporateActionId;
 };
 inline void from_json(const json &j, CorporateActionsDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.corporateActionId, "corporateActionId", j);
 }
 inline void to_json(json &j, const CorporateActionsDTO &o) {
@@ -641,8 +615,7 @@ struct MarketPricesDTO {
   MarketState marketState;
 };
 inline void from_json(const json &j, MarketPricesDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.bidPrice, "bidPrice", j);
   fill_from_json(resp.offerPrice, "offerPrice", j);
   fill_from_json(resp.marketState, "marketState", j);
@@ -661,8 +634,7 @@ struct IdentifiersDTO {
   std::string sedol;
 };
 inline void from_json(const json &j, IdentifiersDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.identifierCode, "identifierCode", j);
   fill_from_json(resp.isin, "isin", j);
   fill_from_json(resp.sedol, "sedol", j);
@@ -763,8 +735,7 @@ struct ApiMarketInformationDTO {
   std::string fullMarketName;
 };
 inline void from_json(const json &j, ApiMarketInformationDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.marketId, "marketId", j);
   fill_from_json(resp.chartMarketId, "chartMarketId", j);
   fill_from_json(resp.name, "name", j);
@@ -948,8 +919,7 @@ struct ApiMarketTagDTO {
   int weighting;
 };
 inline void from_json(const json &j, ApiMarketTagDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.marketTagId, "marketTagId", j);
   fill_from_json(resp.name, "name", j);
   fill_from_json(resp.type, "type", j);
@@ -969,8 +939,7 @@ struct FullMarketInformationSearchWithTagsResponseDTO {
   std::vector<ApiMarketTagDTO> tags;
 };
 inline void from_json(const json &j, FullMarketInformationSearchWithTagsResponseDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.marketInformation, "marketInformation", j);
   fill_from_json(resp.tags, "tags", j);
 }
@@ -990,8 +959,7 @@ struct PriceBarDTO {
   double volume;
 };
 inline void from_json(const json &j, PriceBarDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.barDate, "BarDate", j);
   fill_from_json(resp.open, "Open", j);
   fill_from_json(resp.close, "Close", j);
@@ -1010,8 +978,7 @@ struct GetPriceBarResponseDTO {
   PriceBarDTO partialPriceBar;
 };
 inline void from_json(const json &j, GetPriceBarResponseDTO &resp) {
-  if (j == nullptr)
-    return;
+
   fill_from_json(resp.priceBars, "PriceBars", j);
   fill_from_json(resp.partialPriceBar, "PartialPriceBar", j);
 }
