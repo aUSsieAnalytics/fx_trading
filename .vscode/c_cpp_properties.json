@@ -15,9 +15,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/bazel-bin/external/nlohmann_json/include",
-                "${workspaceFolder}/bazel-bin/external/cpr/include"
+                "${workspaceFolder}/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
