@@ -6,6 +6,9 @@ cc_test(
     ],
     includes = ["."],
     size = "small",
+    tags = [
+        "exclusive"  # Ensures test runs alone
+    ],
     deps = [
         "//types:trading_types",
         "//stonex:stonex",
