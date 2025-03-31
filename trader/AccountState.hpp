@@ -18,8 +18,10 @@ public:
     switch (this->_broker) {
     case Broker::FOREXCOM:
       account_margin_stonex = StoneX::get_account_margin();
-      this->set_data({account_margin_stonex.cash, account_margin_stonex.netEquity,
-                      account_margin_stonex.margin, Currency::EUR});
+      AccountState result =
+          AccountState{account_margin_stonex.cash, account_margin_stonex.netEquity,
+                       account_margin_stonex.margin, Currency::EUR};
+      this->set_data(result);
       break;
     default:
       this->logger->warn("Broker of type '" + std::to_string(this->_broker) + "' not supported.");

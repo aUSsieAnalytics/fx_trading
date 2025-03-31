@@ -54,7 +54,7 @@ inline std::shared_ptr<cpr::Session> session = std::make_shared<cpr::Session>();
 AccountResult get_account_info() {
   if (!AccountCredentials::authorized) {
     if (!authorize_stonex()) {
-      throw std::runtime_error("Could not initialize session.");
+      throw std::runtime_error("Could not authorize session.");
     }
   }
   session->SetUrl(cpr::Url{*base_url_ptr + "/UserAccount/ClientAndTradingAccount"});
@@ -136,12 +136,13 @@ GetPriceBarResponseDTO get_latest_price_bars(ForexPair pair, int number_of_bars,
                                              PriceType price_type = PriceType::MID) {
   std::string market_id = std::to_string(get_market_info(pair).marketId);
   session->SetUrl(cpr::Url{*trading_url_ptr + "/market/" + market_id + "/barhistory"});
-  session->SetParameters(
-      cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
-                      {"span", std::to_string(span)},
-                      {"interval", std::to_string(period_unit)},
-                      {"PriceType", std::to_string(price_type)},
-                      {"PriceBars", std::to_string(number_of_bars)}});
+  cpr::Parameters params;
+  params.Add({"clientAccountId", std::to_string(AccountCredentials::account_id)});
+  params.Add({"span", std::to_string(span)});
+  params.Add({"interval", std::to_string(period_unit)});
+  params.Add({"PriceType", std::to_string(price_type)});
+  params.Add({"PriceBars", std::to_string(number_of_bars)});
+  session->SetParameters(params);
   cpr::Response resp = StoneX::session->Get();
   GetPriceBarResponseDTO candles = json::parse(resp.text).template get<GetPriceBarResponseDTO>();
   return candles;
@@ -152,14 +153,16 @@ GetPriceBarResponseDTO get_price_bars_between(ForexPair pair, long utc_from, lon
                                               PriceType price_type = PriceType::MID) {
   std::string market_id = std::to_string(get_market_info(pair).marketId);
   session->SetUrl(cpr::Url{*trading_url_ptr + "/market/" + market_id + "/barhistorybetween"});
-  session->SetParameters(
-      cpr::Parameters{{"clientAccountId", std::to_string(AccountCredentials::account_id)},
-                      {"span", std::to_string(span)},
-                      {"fromTimestampUTC", std::to_string(utc_from)},
-                      {"toTimestampUTC", std::to_string(utc_to)},
-                      {"interval", std::to_string(period_unit)},
-                      {"maxResults", "4000"},
-                      {"priceType", std::to_string(price_type)}});
+  cpr::Parameters params;
+  params.Add({"clientAccountId", std::to_string(AccountCredentials::account_id)});
+  params.Add({"span", std::to_string(span)});
+  params.Add({"interval", std::to_string(period_unit)});
+  params.Add({"PriceType", std::to_string(price_type)});
+  params.Add({"fromTimestampUTC", std::to_string(utc_from)});
+  params.Add({"toTimestampUTC", std::to_string(utc_to)});
+  params.Add({"maxResults", "4000"});
+
+  session->SetParameters(params);
   cpr::Response resp = StoneX::session->Get();
   GetPriceBarResponseDTO candles = json::parse(resp.text).template get<GetPriceBarResponseDTO>();
   return candles;
