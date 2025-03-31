@@ -14,13 +14,12 @@ public:
 
   void calculate() {
     StoneX::ClientAccountMarginResponseDTO account_margin_stonex;
-
+    AccountState result;
     switch (this->_broker) {
     case Broker::FOREXCOM:
       account_margin_stonex = StoneX::get_account_margin();
-      AccountState result =
-          AccountState{account_margin_stonex.cash, account_margin_stonex.netEquity,
-                       account_margin_stonex.margin, Currency::EUR};
+      result = AccountState{account_margin_stonex.cash, account_margin_stonex.netEquity,
+                            account_margin_stonex.margin, Currency::EUR};
       this->set_data(result);
       break;
     default:
