@@ -15,13 +15,14 @@ cc_test(
     ],
 )
 
-cc_test(
+# make a separate test binary for any calls to the actual broker because cpp-httplib seems
+# to cause segfaults on linux.
+cc_binary(
     name = "stonex_tests_live",
     srcs = [
         "test_live_account.cpp",
     ],
     includes = ["."],
-    size = "small",
     deps = [
         "//types:trading_types",
         "//stonex:stonex",
