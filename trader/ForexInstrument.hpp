@@ -2,7 +2,6 @@
 #include "DataNode.hpp"
 #include "stonex.h"
 #include "trading_types.hpp"
-#include <ranges>
 
 namespace DataNodes {
 
@@ -35,12 +34,14 @@ public:
     candle_buffer.resize(candles.priceBars.size());
     time.reserve(candles.priceBars.size());
     time.resize(candles.priceBars.size());
-    for (auto const [i, c] : std::views::enumerate(candles.priceBars)) {
+    int i = 0;
+    for (auto const c : candles.priceBars) {
       candle_buffer[i].close = c.close;
       candle_buffer[i].high = c.high;
       candle_buffer[i].low = c.low;
       candle_buffer[i].open = c.open;
       time[i] = c.barDate;
+      i++;
     }
     candle_sticks->set_data(candle_buffer);
     utc_time_ms->set_data(time);
