@@ -3,15 +3,19 @@ cc_test(
     srcs = [
         "test_trader_nodes.cpp",
         "test_forex_instruments.cpp",
-        "test_account.cpp"
+        "test_account_node.cpp"
     ],
     includes = ["."],
     size = "small",
+    tags = [
+        "exclusive"  # Ensures test runs alone
+    ],
     deps = [
         "//data_node/tests:data_node_test_utils",
         "//data_node:data_node",
         "//data_node_signal_processing:signal_processing",
         "//types:trading_types",
-        "//trader:trader"
+        "//trader:trader",
+        "//stonex/tests:stonex_mock",
     ],
 )

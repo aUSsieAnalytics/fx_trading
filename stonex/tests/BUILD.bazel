@@ -1,0 +1,47 @@
+cc_test(
+    name = "stonex_tests",
+    srcs = [
+        "test_account.cpp",
+        "test_jsonize.cpp"
+    ],
+    includes = ["."],
+    size = "small",
+    tags = [
+        "exclusive"  # Ensures test runs alone
+    ],
+    deps = [
+        "//types:trading_types",
+        "//stonex:stonex",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//stonex/tests:stonex_mock"
+    ],
+)
+
+# make a separate test binary for any calls to the actual broker because cpp-httplib seems
+# to cause segfaults on linux.
+cc_binary(
+    name = "stonex_tests_live",
+    srcs = [
+        "test_live_account.cpp",
+    ],
+    includes = ["."],
+    deps = [
+        "//types:trading_types",
+        "//stonex:stonex",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "stonex_mock",
+    deps = [
+        "//stonex:stonex",
+        "@googletest//:gtest",
+        "@cpp-httplib//:cpp-httplib"
+    ],
+    includes = ["."],
+    visibility = ["//visibility:public"],
+    hdrs = ["stonex_mock.hpp"],
+)

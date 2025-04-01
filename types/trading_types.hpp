@@ -1,11 +1,126 @@
 #pragma once
-
 #include <array>
 #include <iostream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
+template <typename> struct is_std_vector : std::false_type {};
+
+template <typename T> struct is_std_vector<std::vector<T>> : std::true_type {};
+
+template <typename T>
+void fill_from_json(std::vector<T> &vector, const std::string &name, const json &j) {
+  auto item = j.at(name);
+  if (item == nullptr) {
+    vector.clear();
+    vector.reserve(0);
+    return;
+  }
+  vector.reserve(item.size());
+  for (auto &_j : item) {
+    vector.push_back(_j.template get<T>());
+  }
+}
+
+template <typename T>
+typename std::enable_if<!is_std_vector<T>::value, void>::type
+fill_from_json(T &member, const std::string &name, const json &j) {
+  auto item = j.at(name);
+  if (item != nullptr) {
+    item.get_to(member);
+  }
+}
 
 enum CandleStickPrice { OPEN, CLOSE, HIGH, LOW };
+constexpr std::array<std::pair<CandleStickPrice, const char *>, 4> price_to_string = {
+    {{OPEN, "OPEN"}, {CLOSE, "CLOSE"}, {HIGH, "HIGH"}, {LOW, "LOW"}}};
+
+constexpr const std::string_view price_lookup(CandleStickPrice price) {
+  return price_to_string[price].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const CandleStickPrice &price) {
+  return stream << price_lookup(price);
+}
+
+namespace std {
+constexpr const std::string to_string(const CandleStickPrice &price) {
+  return std::string(price_lookup(price));
+}
+} // namespace std
+
+enum PriceType { BID, MID, ASK };
+constexpr std::array<std::pair<PriceType, const char *>, 4> price_type_to_string = {
+    {{BID, "BID"}, {MID, "MID"}, {ASK, "ASK"}}};
+
+constexpr const std::string_view price_type_lookup(PriceType price) {
+  return price_type_to_string[price].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const PriceType &price) {
+  return stream << price_type_lookup(price);
+}
+
+namespace std {
+constexpr const std::string to_string(const PriceType &price) {
+  return std::string(price_type_lookup(price));
+}
+} // namespace std
+
+enum CandlePeriodUnit { MINUTE, HOUR, DAY };
+constexpr std::array<std::pair<CandlePeriodUnit, const char *>, 4> candle_period_to_string = {
+    {{MINUTE, "MINUTE"}, {HOUR, "HOUR"}, {DAY, "DAY"}}};
+
+constexpr const std::string_view candle_period_lookup(CandlePeriodUnit unit) {
+  return candle_period_to_string[unit].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const CandlePeriodUnit &unit) {
+  return stream << candle_period_lookup(unit);
+}
+
+namespace std {
+constexpr const std::string to_string(const CandlePeriodUnit &unit) {
+  return std::string(candle_period_lookup(unit));
+}
+} // namespace std
+
 enum OrderDirection { BUY, SELL };
+constexpr std::array<std::pair<OrderDirection, const char *>, 2> order_direction_to_string = {
+    {{BUY, "BUY"}, {SELL, "SELL"}}};
+
+constexpr const std::string_view order_direction_lookup(OrderDirection direction) {
+  return order_direction_to_string[direction].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const OrderDirection &direction) {
+  return stream << order_direction_lookup(direction);
+}
+
+namespace std {
+constexpr const std::string to_string(const OrderDirection &direction) {
+  return std::string(order_direction_lookup(direction));
+}
+} // namespace std
+
 enum Broker { OANDA, FOREXCOM };
+constexpr std::array<std::pair<Broker, const char *>, 2> broker_to_string = {
+    {{OANDA, "OANDA"}, {FOREXCOM, "FOREXCOM"}}};
+
+constexpr const std::string_view broker_lookup(Broker broker) {
+  return broker_to_string[broker].second;
+}
+
+constexpr const std::ostream &operator<<(std::ostream &stream, const Broker &broker) {
+  return stream << broker_lookup(broker);
+}
+
+namespace std {
+constexpr const std::string to_string(const Broker &broker) {
+  return std::string(broker_lookup(broker));
+}
+} // namespace std
 
 struct CandleStick {
   double open;
@@ -139,12 +254,22 @@ struct CandleStick {
   }
 };
 
-struct Price {
-  CandleStick bid;
-  CandleStick mid;
-  CandleStick ask;
-};
-
+inline void from_json(const json &j, CandleStick &resp) {
+  if (j == nullptr)
+    return;
+  fill_from_json(resp.open, "open", j);
+  fill_from_json(resp.close, "close", j);
+  fill_from_json(resp.high, "high", j);
+  fill_from_json(resp.low, "low", j);
+}
+inline void to_json(json &j, const CandleStick &o) {
+  j = json{
+      {"open", o.open},
+      {"close", o.close},
+      {"high", o.high},
+      {"low", o.low},
+  };
+}
 enum Granularity {
   S5,
   S10,
@@ -183,8 +308,8 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const Granularity
 }
 
 namespace std {
-constexpr const std::string_view to_string(const Granularity &granularity) {
-  return granularity_to_string(granularity);
+constexpr const std::string to_string(const Granularity &granularity) {
+  return std::string(granularity_to_string(granularity));
 }
 } // namespace std
 
@@ -286,7 +411,9 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const ForexPair &
 }
 
 namespace std {
-constexpr const std::string_view to_string(const ForexPair &pair) { return forex_lookup(pair); }
+constexpr const std::string to_string(const ForexPair &pair) {
+  return std::string(forex_lookup(pair));
+}
 } // namespace std
 
 enum Currency {
@@ -328,8 +455,8 @@ constexpr const std::ostream &operator<<(std::ostream &stream, const Currency &c
 }
 
 namespace std {
-constexpr const std::string_view to_string(const Currency &currency) {
-  return currency_lookup(currency);
+constexpr const std::string to_string(const Currency &currency) {
+  return std::string(currency_lookup(currency));
 }
 
 } // namespace std

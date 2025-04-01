@@ -1,0 +1,15 @@
+cc_library(
+    name = "stonex",
+    deps = [
+        "//types:trading_types",
+        "@cpr",
+        "@nlohmann_json//:json",
+        ],
+    srcs = [],
+    hdrs = [
+        "stonex.h",
+        "stonex_types.h"
+    ],
+    visibility = ["//visibility:public"],
+    includes = ["."]
+)

@@ -5,5 +5,8 @@ cc_library(
         "orders.hpp",
     ],
     visibility = ["//visibility:public"],
-    includes = ["."]
+    includes = ["."],
+    deps = [
+        "@nlohmann_json//:json",
+    ],
 )
