@@ -1,3 +1,5 @@
+#pragma once
+
 #include "DataNode.hpp"
 #include "cpr/cpr.h"
 #include "orders.hpp"

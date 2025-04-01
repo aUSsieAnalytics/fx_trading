@@ -950,8 +950,14 @@ inline void to_json(json &j, const FullMarketInformationSearchWithTagsResponseDT
   };
 }
 
+struct BarDate : public std::string {
+  operator unsigned long() const {
+    return std::stoul(std::string(this->begin() + 6, this->end() - 2));
+  }
+};
+
 struct PriceBarDTO {
-  std::string barDate;
+  BarDate barDate;
   double open;
   double close;
   double high;

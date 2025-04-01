@@ -19,7 +19,7 @@ TEST(StoneX, TestStoneXLive) {
   // std::cout << json(market) << "\n";
   auto candles = StoneX::get_latest_price_bars(ForexPair::EURUSD, 20, 15, CandlePeriodUnit::MINUTE,
                                                PriceType::MID);
-  // std::cout << json(candles) << "\n";
+  std::cout << json(candles.partialPriceBar) << "\n";
 
   std::chrono::year_month_day ymd = std::chrono::July / 7 / 2024;
   std::chrono::sys_days sd = ymd;

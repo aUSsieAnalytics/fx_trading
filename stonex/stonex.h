@@ -9,13 +9,31 @@ using json = nlohmann::json;
 
 namespace StoneX {
 
+const inline std::unordered_map<Granularity, std::pair<CandlePeriodUnit, int>>
+    granularity_to_interval_and_span = {
+        {Granularity::M1, {CandlePeriodUnit::MINUTE, 1}},
+        {Granularity::M2, {CandlePeriodUnit::MINUTE, 2}},
+        {Granularity::M4, {CandlePeriodUnit::MINUTE, 4}},
+        {Granularity::M5, {CandlePeriodUnit::MINUTE, 5}},
+        {Granularity::M10, {CandlePeriodUnit::MINUTE, 10}},
+        {Granularity::M15, {CandlePeriodUnit::MINUTE, 15}},
+        {Granularity::H1, {CandlePeriodUnit::HOUR, 1}},
+        {Granularity::H2, {CandlePeriodUnit::HOUR, 2}},
+        {Granularity::H3, {CandlePeriodUnit::HOUR, 3}},
+        {Granularity::H4, {CandlePeriodUnit::HOUR, 4}},
+        {Granularity::H6, {CandlePeriodUnit::HOUR, 6}},
+        {Granularity::H8, {CandlePeriodUnit::HOUR, 8}},
+        {Granularity::D, {CandlePeriodUnit::DAY, 1}},
+        {Granularity::W, {CandlePeriodUnit::DAY, 7}},
+};
+
 const inline std::string base_url = "https://ciapi.cityindex.com/v2";
 const inline std::string trading_url = "https://ciapi.cityindex.com/TradingAPI";
 
 inline std::shared_ptr<std::string> base_url_ptr = std::make_shared<std::string>(base_url);
 inline std::shared_ptr<std::string> trading_url_ptr = std::make_shared<std::string>(trading_url);
 
-std::unordered_map<std::string, ApiMarketInformationDTO> markets;
+inline std::unordered_map<std::string, ApiMarketInformationDTO> markets;
 
 struct AccountCredentials {
   static inline std::string username = "";
@@ -26,7 +44,7 @@ struct AccountCredentials {
   static inline int account_id = 0;
 };
 
-bool authorize_stonex() {
+bool inline authorize_stonex() {
   if (AccountCredentials::authorized) {
     return true;
   }
@@ -51,7 +69,7 @@ bool authorize_stonex() {
 
 inline std::shared_ptr<cpr::Session> session = std::make_shared<cpr::Session>();
 
-AccountResult get_account_info() {
+AccountResult inline get_account_info() {
   if (!AccountCredentials::authorized) {
     if (!authorize_stonex()) {
       throw std::runtime_error("Could not authorize session.");
@@ -62,7 +80,7 @@ AccountResult get_account_info() {
   return json::parse(resp.text).template get<AccountResult>();
 }
 
-bool initialize_session() {
+bool inline initialize_session() {
   if (!AccountCredentials::authorized) {
     if (!authorize_stonex()) {
       return false;
@@ -91,7 +109,7 @@ bool initialize_session() {
   return true;
 }
 
-ClientAccountMarginResponseDTO get_account_margin() {
+ClientAccountMarginResponseDTO inline get_account_margin() {
   if (AccountCredentials::account_id == 0) {
     if (!initialize_session()) {
       throw std::runtime_error("Could not initialize the session.");
@@ -104,7 +122,7 @@ ClientAccountMarginResponseDTO get_account_margin() {
   return json::parse(resp.text).template get<ClientAccountMarginResponseDTO>();
 }
 
-ApiMarketInformationDTO get_market_info(ForexPair pair) {
+ApiMarketInformationDTO inline get_market_info(ForexPair pair) {
   std::string pair_as_string = std::to_string(pair);
   std::string search_string = pair_as_string;
   if (markets.contains(pair_as_string)) {
@@ -131,9 +149,9 @@ ApiMarketInformationDTO get_market_info(ForexPair pair) {
   return markets[pair_as_string];
 }
 
-GetPriceBarResponseDTO get_latest_price_bars(ForexPair pair, int number_of_bars, int span,
-                                             CandlePeriodUnit period_unit,
-                                             PriceType price_type = PriceType::MID) {
+GetPriceBarResponseDTO inline get_latest_price_bars(ForexPair pair, int number_of_bars, int span,
+                                                    CandlePeriodUnit period_unit,
+                                                    PriceType price_type = PriceType::MID) {
   std::string market_id = std::to_string(get_market_info(pair).marketId);
   session->SetUrl(cpr::Url{*trading_url_ptr + "/market/" + market_id + "/barhistory"});
   cpr::Parameters params;
@@ -148,9 +166,9 @@ GetPriceBarResponseDTO get_latest_price_bars(ForexPair pair, int number_of_bars,
   return candles;
 }
 
-GetPriceBarResponseDTO get_price_bars_between(ForexPair pair, long utc_from, long utc_to, int span,
-                                              CandlePeriodUnit period_unit,
-                                              PriceType price_type = PriceType::MID) {
+GetPriceBarResponseDTO inline get_price_bars_between(ForexPair pair, long utc_from, long utc_to,
+                                                     int span, CandlePeriodUnit period_unit,
+                                                     PriceType price_type = PriceType::MID) {
   std::string market_id = std::to_string(get_market_info(pair).marketId);
   session->SetUrl(cpr::Url{*trading_url_ptr + "/market/" + market_id + "/barhistorybetween"});
   cpr::Parameters params;
