@@ -1,10 +1,10 @@
-name: FXTrading-Repo-Workflow
+name: FXTrading-PR-Workflow
 
 on:
   pull_request:
     branches:
       - 'main'
-    types: [synchronize, reopened, closed, opened]
+    types: [synchronize, reopened, opened]
 
 permissions:
   id-token: write

@@ -1,0 +1,18 @@
+name: FXTrading-Merge-To-Main-Workflow
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  OnMainMerge:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: echo hello
+      run: |
+        echo "Hello! This will do more when release actions on a PR merge are needed."
+
